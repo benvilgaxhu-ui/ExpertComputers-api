@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import apiBase from '../config'; // Use the relative path to your config file
 
 const About = () => {
     return (

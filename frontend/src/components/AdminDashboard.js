@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 // 🚀 REPORT GENERATION LIBRARIES
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable'; 
+import apiBase from '../config'; // Use the relative path to your config file
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

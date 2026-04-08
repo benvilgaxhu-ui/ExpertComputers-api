@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import apiBase from '../config'; // Use the relative path to your config file
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);

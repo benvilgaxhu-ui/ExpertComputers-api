@@ -4,6 +4,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 // 🚀 Dynamic Carousel Import
 import GamingCarousel from './GamingCarousel'; 
+import apiBase from '../config'; // Use the relative path to your config file
 
 const Home = () => {
     const [formData, setFormData] = useState({ name: '', phone: '', issue: '' });

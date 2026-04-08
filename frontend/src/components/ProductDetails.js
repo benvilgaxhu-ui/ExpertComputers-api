@@ -4,6 +4,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { QRCodeCanvas } from 'qrcode.react';
 import ReactDOM from 'react-dom/client'; // 🚀 Updated to React 18 client for the modal render
+import apiBase from '../config'; // Use the relative path to your config file
 
 const ProductDetails = () => {
     const { id } = useParams();

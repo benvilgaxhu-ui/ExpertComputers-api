@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import apiBase from '../config'; // Use the relative path to your config file
 
 const Login = () => {
     const [email, setEmail] = useState('');

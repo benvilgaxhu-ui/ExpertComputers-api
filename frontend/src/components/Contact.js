@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import axios from 'axios'; // 🚀 Added Axios for Backend connection
+import apiBase from '../config'; // Use the relative path to your config file
 
 const Contact = () => {
     const [formData, setFormData] = useState({

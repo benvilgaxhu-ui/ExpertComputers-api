@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import apiBase from '../config'; // Use the relative path to your config file
 
 const ServiceForm = () => {
     const [formData, setFormData] = useState({ device: '', issue: '', contact: '' });
