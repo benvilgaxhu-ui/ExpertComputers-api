@@ -1,0 +1,35 @@
+.product-card {
+  background: #0a0a0a;
+  color: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 238, 255, 0.2);
+}
+
+.product-price {
+  color: #0ef;
+  font-weight: bold;
+}
+
+.cart-btn {
+  background: #0ef;
+  border: none;
+  color: #000;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.cart-btn:hover {
+  transform: scale(1.05);
+}
+
+.cart-btn.in-cart {
+  background: #333;
+  color: #0ef;
+  cursor: default;
+}

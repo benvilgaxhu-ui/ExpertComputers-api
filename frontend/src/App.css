@@ -1,0 +1,102 @@
+/* Expert Computers Custom Theme */
+:root {
+  --primary-blue: #003366;
+  --accent-gold: #ffcc00;
+  --light-gray: #f8f9fa;
+}
+
+body {
+  background-color: var(--light-gray);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/* --- Updated Navbar Styles --- */
+.navbar {
+  background-color: #ffffff !important; /* Bright White Background */
+  border-bottom: 3px solid #00aaff !important; /* Sky Blue accent from logo */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ensure Nav Links are dark and readable on white */
+.navbar .nav-link {
+  color: #212529 !important; 
+  transition: color 0.2s;
+}
+
+/* Hover effect: turns Sky Blue when you point at it */
+.navbar .nav-link:hover {
+  color: #00aaff !important; 
+}
+
+/* Specific styling for the Dashboard link to make it stand out */
+.text-primary {
+  color: #00aaff !important;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-blue);
+  border: none;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #002244;
+}
+
+.hero-section {
+  background: linear-gradient(rgba(0,51,102,0.8), rgba(0,51,102,0.8)), 
+              url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=80');
+  background-size: cover;
+  color: white;
+  padding: 60px 0;
+  border-radius: 0 0 50px 50px;
+}
+/* Premium Laptop Card Styling */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+    background: #ff4757;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.product-img-container {
+    height: 200px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.product-img-container img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
