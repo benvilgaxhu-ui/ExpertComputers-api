@@ -51,19 +51,19 @@ const AdminDashboard = () => {
         
         try {
             // 1. Fetch All Hardware Repair Tickets
-            const resRequests = await axios.get('${apiBase}/api/services/admin/all', authHeader);
+            const resRequests = await axios.get(`${apiBase}/api/services/admin/all`, authHeader);
             setRequests(resRequests.data);
 
             // 2. Fetch Active Inventory Stock
-            const resProducts = await axios.get('${apiBase}/api/products', authHeader);
+            const resProducts = await axios.get(`${apiBase}/api/products`, authHeader);
             setLaptops(resProducts.data);
 
             // 3. Fetch Lead Generation Inquiries
-            const resInquiries = await axios.get('${apiBase}/api/inquiries', authHeader);
+            const resInquiries = await axios.get(`${apiBase}/api/inquiries`, authHeader);
             setInquiries(resInquiries.data);
 
             // 🚀 4. Fetch Buy Now Orders
-            const resOrders = await axios.get('${apiBase}/api/orders', authHeader);
+            const resOrders = await axios.get(`${apiBase}/api/orders`, authHeader);
             setOrders(resOrders.data);
 
         } catch (err) {
