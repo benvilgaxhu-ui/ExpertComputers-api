@@ -14,7 +14,10 @@ const app = express();
 app.use(cors()); // Bridges the gap between Frontend (3000) and Backend (5000)
 app.use(express.json()); // Parses incoming JSON data
 app.use(express.urlencoded({ extended: true })); // parses Form-Data for Multer/Images
-
+// This tells the server what to do when someone visits https://expertcomputers.onrender.com/
+app.get('/', (req, res) => {
+  res.send('<h1>ExpertComputers API is Live!</h1><p>The server is running successfully.</p>');
+});
 // --- 3. STATIC FOLDER (Crucial for showing Uploaded Images) ---
 // This makes http://localhost:5000/uploads/image.jpg accessible to React
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
