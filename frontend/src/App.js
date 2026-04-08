@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'; 
 import Swal from 'sweetalert2';
-import apiBase from './config'; // Make sure the path to config.js is correct
+
 
 // 🚀 CONFIG & LOGO
 import API_BASE_URL from './config'; // Centralized URL
