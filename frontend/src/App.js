@@ -4,7 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'; 
 import Swal from 'sweetalert2';
 
-// 🚀 LOGO IMPORT
+// 🚀 CONFIG & LOGO
+import API_BASE_URL from './config'; // Centralized URL
 import logo from './assets/LOGO.png'; 
 
 // --- COMPONENT IMPORTS ---
@@ -20,6 +21,7 @@ import Contact from './components/Contact';
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
+  // Sync token state across tabs and on login/logout
   useEffect(() => {
     const checkToken = () => {
       setToken(localStorage.getItem('token'));
@@ -49,6 +51,7 @@ function App() {
             timer: 1000,
             showConfirmButton: false
           }).then(() => {
+            // Using window.location.href forces a full refresh to clear any cached states
             window.location.href = '/'; 
           });
       }
@@ -59,11 +62,9 @@ function App() {
     <Router>
       <div className="d-flex flex-column min-vh-100 bg-white">
         
-        {/* --- 🌟 UPDATED NAVIGATION BAR --- */}
+        {/* --- 🌟 NAVIGATION BAR --- */}
         <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-0 border-bottom border-info border-3">
           <div className="container align-items-end"> 
-            {/* align-items-end on the container ensures the brand and toggle align to bottom */}
-            
             <Link className="navbar-brand py-0" to="/">
               <img 
                 src={logo} 
@@ -76,7 +77,6 @@ function App() {
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            {/* 🚀 THE FIX: We use align-items-md-end and pb-md-3 to drop the links to the baseline */}
             <div className="collapse navbar-collapse align-items-md-end justify-content-end" id="navbarNav">
               <ul className="navbar-nav ms-auto align-items-center align-items-md-end gap-2 pb-md-3">
                 <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue" to="/">Home</Link></li>
@@ -114,17 +114,17 @@ function App() {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/laptops" element={<ProductList />} />
-            <Route path="/services" element={<ServiceForm />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/login" element={<UserLogin />} /> 
+            <Route path="/laptops" element={<ProductList apiBase={API_BASE_URL} />} />
+            <Route path="/services" element={<ServiceForm apiBase={API_BASE_URL} />} />
+            <Route path="/admin" element={<AdminDashboard apiBase={API_BASE_URL} />} />
+            <Route path="/product/:id" element={<ProductDetails apiBase={API_BASE_URL} />} />
+            <Route path="/login" element={<UserLogin apiBase={API_BASE_URL} />} /> 
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </main>
 
-        {/* --- 🌟 BRIGHT FOOTER --- */}
+        {/* --- 🌟 FOOTER --- */}
         <footer className="bg-white text-dark py-5 mt-auto border-top border-info border-4 shadow">
           <div className="container">
             <div className="row align-items-center text-center text-md-start">

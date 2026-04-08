@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   res.send('<h1>ExpertComputers API is Live!</h1><p>The server is running successfully.</p>');
 });
 // --- 3. STATIC FOLDER (Crucial for showing Uploaded Images) ---
-// This makes http://localhost:5000/uploads/image.jpg accessible to React
+// This makes ${apiBase}/uploads/image.jpg accessible to React
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- 4. ROUTES (The Modules) ---

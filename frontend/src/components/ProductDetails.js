@@ -12,7 +12,7 @@ const ProductDetails = () => {
     const [isExpanded, setIsExpanded] = useState(false); // 📖 Read More state
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/products/${id}`)
+        axios.get(`${apiBase}/api/products/${id}`)
             .then(res => {
                 setProduct(res.data);
                 if (res.data.images && res.data.images.length > 0) {
@@ -31,7 +31,7 @@ const ProductDetails = () => {
 
     const resolveImage = (img) => {
         if (!img) return 'https://via.placeholder.com/400x300?text=No+Image';
-        return img.startsWith('http') ? img : `http://localhost:5000${img}`;
+        return img.startsWith('http') ? img : `${apiBase}${img}`;
     };
 
     /**
@@ -93,7 +93,7 @@ const ProductDetails = () => {
                         productId: product._id 
                     };
 
-                    await axios.post('http://localhost:5000/api/orders', orderPayload);
+                    await axios.post('${apiBase}/api/orders', orderPayload);
 
                     // Root variable to handle cleanup
                     let qrRoot;

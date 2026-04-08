@@ -13,7 +13,7 @@ const ProductList = () => {
     const categories = ['All', 'Gaming', 'Business', 'Student', 'Parts', 'Accessories'];
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/products')
+        axios.get('${apiBase}/api/products')
             .then(res => {
                 setProducts(res.data);
                 setFilteredProducts(res.data);
@@ -55,7 +55,7 @@ const ProductList = () => {
 
     const resolveImage = (img) => {
         if (!img) return 'https://via.placeholder.com/300x200?text=Expert+Computers';
-        return img.startsWith('http') ? img : `http://localhost:5000${img}`;
+        return img.startsWith('http') ? img : `${apiBase}${img}`;
     };
 
     if (loading) return (

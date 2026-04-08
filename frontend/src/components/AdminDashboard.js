@@ -50,19 +50,19 @@ const AdminDashboard = () => {
         
         try {
             // 1. Fetch All Hardware Repair Tickets
-            const resRequests = await axios.get('http://localhost:5000/api/services/admin/all', authHeader);
+            const resRequests = await axios.get('${apiBase}/api/services/admin/all', authHeader);
             setRequests(resRequests.data);
 
             // 2. Fetch Active Inventory Stock
-            const resProducts = await axios.get('http://localhost:5000/api/products', authHeader);
+            const resProducts = await axios.get('${apiBase}/api/products', authHeader);
             setLaptops(resProducts.data);
 
             // 3. Fetch Lead Generation Inquiries
-            const resInquiries = await axios.get('http://localhost:5000/api/inquiries', authHeader);
+            const resInquiries = await axios.get('${apiBase}/api/inquiries', authHeader);
             setInquiries(resInquiries.data);
 
             // 🚀 4. Fetch Buy Now Orders
-            const resOrders = await axios.get('http://localhost:5000/api/orders', authHeader);
+            const resOrders = await axios.get('${apiBase}/api/orders', authHeader);
             setOrders(resOrders.data);
 
         } catch (err) {
@@ -327,9 +327,9 @@ const generateInvoicePDF = (ord) => {
         try {
             const config = { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` } };
             if (isEditing) {
-                await axios.put(`http://localhost:5000/api/products/${isEditing}`, formData, config);
+                await axios.put(`${apiBase}/api/products/${isEditing}`, formData, config);
             } else {
-                await axios.post('http://localhost:5000/api/products', formData, config);
+                await axios.post('${apiBase}/api/products', formData, config);
             }
             resetForm(); fetchData();
             Swal.fire('Cloud Sync Success', 'Website inventory has been updated live.', 'success');
@@ -341,7 +341,7 @@ const generateInvoicePDF = (ord) => {
     const deleteLaptop = async (id) => {
         if ((await Swal.fire({ title: 'Delete Laptop?', icon: 'warning', showCancelButton: true })).isConfirmed) {
             try {
-                await axios.delete(`http://localhost:5000/api/products/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+                await axios.delete(`${apiBase}/api/products/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 fetchData();
                 Swal.fire('Deleted', 'Item removed.', 'success');
             } catch (err) { console.error(err); }
@@ -351,7 +351,7 @@ const generateInvoicePDF = (ord) => {
     const updateOrderStatus = async (id, newStatus) => {
         try {
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`http://localhost:5000/api/orders/${id}`, { status: newStatus }, config);
+            await axios.put(`${apiBase}/api/orders/${id}`, { status: newStatus }, config);
             fetchData(); 
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Payment Verified!', showConfirmButton: false, timer: 2000 });
         } catch (err) {
@@ -362,7 +362,7 @@ const generateInvoicePDF = (ord) => {
     const deleteOrder = async (id) => {
         if ((await Swal.fire({ title: 'Delete Record?', icon: 'warning', showCancelButton: true })).isConfirmed) {
             try {
-                await axios.delete(`http://localhost:5000/api/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+                await axios.delete(`${apiBase}/api/orders/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 fetchData();
             } catch (err) { console.error(err); }
         }
@@ -391,7 +391,7 @@ const generateInvoicePDF = (ord) => {
 
     const markAsFixed = async (id) => {
         try {
-            await axios.put(`http://localhost:5000/api/services/${id}`, { status: 'Fixed ✅' }, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.put(`${apiBase}/api/services/${id}`, { status: 'Fixed ✅' }, { headers: { Authorization: `Bearer ${token}` } });
             fetchData();
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Marked Fixed', showConfirmButton: false, timer: 2000 });
         } catch (err) { console.error(err); }

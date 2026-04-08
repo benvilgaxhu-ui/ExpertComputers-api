@@ -8,7 +8,7 @@ const GamingCarousel = () => {
     const [fade, setFade] = useState(true);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/products')
+        axios.get('${apiBase}/api/products')
             .then(res => {
                 const gaming = res.data.filter(lp => lp.category === 'Gaming');
                 setGamingLaptops(gaming);
@@ -43,7 +43,7 @@ const GamingCarousel = () => {
     const current = gamingLaptops[currentIndex];
     const imgPath = current.images?.[0]?.startsWith('http') 
         ? current.images[0] 
-        : `http://localhost:5000${current.images?.[0]}`;
+        : `${apiBase}${current.images?.[0]}`;
 
     return (
         <div className="container my-5">
