@@ -14,7 +14,7 @@ const ProductList = () => {
     const categories = ['All', 'Gaming', 'Business', 'Student', 'Parts', 'Accessories'];
 
     useEffect(() => {
-        axios.get('${apiBase}/api/products')
+        axios.get(`${apiBase}/api/products`)
             .then(res => {
                 setProducts(res.data);
                 setFilteredProducts(res.data);

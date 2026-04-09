@@ -17,7 +17,7 @@ const UserLogin = () => {
         
         try {
             // 🚀 TARGETED FIX: Using /api/auth/login to match your backend
-            const res = await axios.post('${apiBase}/api/auth/login', { email, password });
+            const res = await axios.post(`${apiBase}/api/auth/login`, { email, password });
             
             // Securely store session data
             localStorage.setItem('token', res.data.token);

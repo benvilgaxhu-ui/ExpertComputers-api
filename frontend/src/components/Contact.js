@@ -15,7 +15,7 @@ const Contact = () => {
 
         try {
             // 🚀 Send data to the Backend API
-            await axios.post('${apiBase}/api/inquiries', formData);
+            await axios.post(`${apiBase}/api/inquiries`, formData);
 
             Swal.fire({
                 title: 'Message Received! 🚀',

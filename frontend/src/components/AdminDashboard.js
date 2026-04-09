@@ -330,7 +330,7 @@ const generateInvoicePDF = (ord) => {
             if (isEditing) {
                 await axios.put(`${apiBase}/api/products/${isEditing}`, formData, config);
             } else {
-                await axios.post('${apiBase}/api/products', formData, config);
+                await axios.post(`${apiBase}/api/products`, formData, config);
             }
             resetForm(); fetchData();
             Swal.fire('Cloud Sync Success', 'Website inventory has been updated live.', 'success');

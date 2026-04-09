@@ -9,7 +9,7 @@ const GamingCarousel = () => {
     const [fade, setFade] = useState(true);
 
     useEffect(() => {
-        axios.get('${apiBase}/api/products')
+        axios.get(`${apiBase}/api/products`)
             .then(res => {
                 const gaming = res.data.filter(lp => lp.category === 'Gaming');
                 setGamingLaptops(gaming);
