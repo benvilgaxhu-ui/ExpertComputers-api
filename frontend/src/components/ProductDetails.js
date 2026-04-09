@@ -94,7 +94,7 @@ const ProductDetails = () => {
                         productId: product._id 
                     };
 
-                    await axios.post('${apiBase}/api/orders', orderPayload);
+                    await axios.post(`${apiBase}/api/orders`, orderPayload);
 
                     // Root variable to handle cleanup
                     let qrRoot;
