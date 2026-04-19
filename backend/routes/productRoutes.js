@@ -51,27 +51,32 @@ router.get('/:id', async (req, res) => {
 
 // --- 4. POST: ADD NEW PRODUCT (Protected) ---
 // Note: 'images' matches the key used in your Frontend FormData
+// backend/routes/productRoutes.js
+
 router.post('/', protect, adminOnly, upload.array('images', 5), async (req, res) => {
     try {
-        // Cloudinary returns the full URL in file.path
+        // 🛠️ Check if images arrived from Cloudinary
         const imagePaths = req.files ? req.files.map(file => file.path) : [];
 
         const newProduct = new Product({
             name: req.body.name,
             brand: req.body.brand,
             category: req.body.category,
-            mrp: req.body.mrp ? Number(req.body.mrp) : null,
+            mrp: req.body.mrp ? Number(req.body.mrp) : 0, 
             price: Number(req.body.price),
             description: req.body.description,
-            images: imagePaths, // Permanent Cloudinary Links
+            images: imagePaths, // These are the https:// links
             sku: "EXP-" + Date.now() 
         });
 
-        const savedProduct = await newProduct.save();
+        // ✅ FIX: Ensure this is newProduct.save() NOT newProduct.laptop.save()
+        const savedProduct = await newProduct.save(); 
+        
         res.status(201).json(savedProduct);
-        console.log(`✅ Product Saved to Cloud: ${savedProduct.name}`);
+        console.log(`✅ Product Saved: ${savedProduct.name}`);
     } catch (err) {
-        console.error("❌ Cloud Save Error:", err.message);
+        // This will print the EXACT reason for the 500 error in Render Logs
+        console.error("❌ DB/Cloudinary Save Error:", err.message);
         res.status(500).json({ error: err.message });
     }
 });

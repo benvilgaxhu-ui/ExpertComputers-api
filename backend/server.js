@@ -50,9 +50,14 @@ app.get('*', (req, res) => {
 });
 
 // --- 6. GLOBAL ERROR HANDLER ---
+// backend/server.js - Update the error handler
 app.use((err, req, res, next) => {
-    console.error("🔥 Server Error:", err.stack);
-    res.status(500).json({ error: "Something went wrong on the server!" });
+    // This will now print the FULL error details in your Render logs
+    console.error("🔥 Full Server Error Info:", err); 
+    res.status(500).json({ 
+        error: "Internal Server Error", 
+        message: err.message || "No error message provided" 
+    });
 });
 
 // --- 7. DATABASE CONNECTION & START ---
