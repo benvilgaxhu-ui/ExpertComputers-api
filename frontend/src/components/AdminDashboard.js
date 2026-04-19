@@ -22,7 +22,7 @@ const AdminDashboard = () => {
     const [isEditing, setIsEditing] = useState(null); 
     const [searchTerm, setSearchTerm] = useState('');
 
-    const categories = ['Gaming', 'Business', 'Student', 'Parts', 'Accessories'];
+    const categories = ['Gaming', 'Apple', 'Business', 'Parts', 'Accessories'];
     
     // Detailed Product State for Inventory Management
     const [newProd, setNewProd] = useState({ 
