@@ -12,7 +12,7 @@ const app = express();
 
 // --- 2. MIDDLEWARE ---
 app.use(cors({
-  origin: 'https://expertcomputerss.onrender.com', // Your frontend URL
+  origin: 'https://expertcomputers.onrender.com', // Your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 })); // Bridges the gap between Frontend (3000) and Backend (5000)
