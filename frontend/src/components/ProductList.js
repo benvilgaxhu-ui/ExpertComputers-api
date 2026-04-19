@@ -11,7 +11,7 @@ const ProductList = () => {
     const [loading, setLoading] = useState(true);
 
     // 🚀 Strict category list as requested
-    const categories = ['All', 'Gaming', 'Business', 'Student', 'Parts', 'Accessories'];
+    const categories = ['All', 'Gaming', 'Apple', 'Business', 'Parts', 'Accessories'];
 
     useEffect(() => {
         axios.get(`${apiBase}/api/products`)
