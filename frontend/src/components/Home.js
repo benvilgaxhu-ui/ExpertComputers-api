@@ -2,28 +2,41 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-// 🚀 Dynamic Carousel Import
 import GamingCarousel from './GamingCarousel'; 
-import apiBase from '../config'; // Use the relative path to your config file
+import apiBase from '../config'; 
 
 const Home = () => {
+    // Keep the local state names as is for easy form handling
     const [formData, setFormData] = useState({ name: '', phone: '', issue: '' });
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        
         try {
-            await axios.post(`${apiBase}/api/services`, formData);
+            // 🛠️ FIX: Format the data to match your Mongoose Model
+            const dataToSubmit = {
+                name: formData.name,
+                contact: formData.phone, // Map 'phone' to 'contact'
+                issue: formData.issue,
+                device: "Laptop/Mobile"  // Provide the required 'device' field
+            };
+
+            await axios.post(`${apiBase}/api/services`, dataToSubmit);
+
             Swal.fire({
                 title: 'Request Received!',
                 text: 'An Expert Technician will call you shortly.',
                 icon: 'success',
                 confirmButtonColor: '#0d6efd'
             });
+
+            // Reset form
             setFormData({ name: '', phone: '', issue: '' });
         } catch (err) {
-            Swal.fire('Error', 'Could not book service. Try again.', 'error');
+            console.error("Booking Error:", err.response?.data || err.message);
+            Swal.fire('Error', 'Could not book service. Check console for details.', 'error');
         } finally {
             setLoading(false);
         }
@@ -31,7 +44,7 @@ const Home = () => {
 
     return (
         <div>
-            {/* --- HERO SECTION WITH OVERLAY --- */}
+            {/* --- HERO SECTION --- */}
             <div 
                 className="hero-section text-white py-5 shadow-lg" 
                 style={{ 
@@ -44,7 +57,6 @@ const Home = () => {
                     alignItems: 'center'
                 }}
             >
-                {/* Dark Overlay for Readability */}
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.65)' }}></div>
 
                 <div className="container position-relative" style={{ zIndex: 2 }}>
@@ -62,8 +74,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* --- 🚀 THE CHANGING TILE (GAMING CAROUSEL) --- */}
-            {/* This is placed exactly in the white space you circled */}
+            {/* --- GAMING CAROUSEL --- */}
             <GamingCarousel />
 
             {/* --- MAIN CONTENT --- */}
@@ -83,7 +94,7 @@ const Home = () => {
                             </div>
                             <div className="col-sm-6">
                                 <div className="card h-100 border-0 shadow-sm p-4 rounded-4 hover-lift transition-all">
-                                    <div className="mb-3 fs-1">🔧 Chip-Level Repair</div>
+                                    <div className="mb-3 fs-1">🔧</div>
                                     <h4 className="fw-bold">Expert Repairs</h4>
                                     <p className="text-muted small mb-0">Advanced motherboard repair, screen replacement, and professional data recovery.</p>
                                 </div>
@@ -106,15 +117,36 @@ const Home = () => {
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
                                     <label className="small fw-bold mb-1">Full Name</label>
-                                    <input type="text" className="form-control py-2 border-0 bg-light" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required placeholder="Enter your name" />
+                                    <input 
+                                        type="text" 
+                                        className="form-control py-2 border-0 bg-light" 
+                                        value={formData.name} 
+                                        onChange={e => setFormData({...formData, name: e.target.value})} 
+                                        required 
+                                        placeholder="Enter your name" 
+                                    />
                                 </div>
                                 <div className="mb-3">
                                     <label className="small fw-bold mb-1">Phone (WhatsApp preferred)</label>
-                                    <input type="tel" className="form-control py-2 border-0 bg-light" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} required placeholder="e.g. 9319199300" />
+                                    <input 
+                                        type="tel" 
+                                        className="form-control py-2 border-0 bg-light" 
+                                        value={formData.phone} 
+                                        onChange={e => setFormData({...formData, phone: e.target.value})} 
+                                        required 
+                                        placeholder="e.g. 9319199300" 
+                                    />
                                 </div>
                                 <div className="mb-3">
                                     <label className="small fw-bold mb-1">Issue Details</label>
-                                    <textarea className="form-control border-0 bg-light" rows="3" value={formData.issue} onChange={e => setFormData({...formData, issue: e.target.value})} required placeholder="Tell us what's wrong with your device..."></textarea>
+                                    <textarea 
+                                        className="form-control border-0 bg-light" 
+                                        rows="3" 
+                                        value={formData.issue} 
+                                        onChange={e => setFormData({...formData, issue: e.target.value})} 
+                                        required 
+                                        placeholder="Tell us what's wrong with your device..."
+                                    ></textarea>
                                 </div>
                                 <button className="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm mt-2" disabled={loading}>
                                     {loading ? (
