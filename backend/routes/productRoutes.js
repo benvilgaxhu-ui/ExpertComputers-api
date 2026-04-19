@@ -1,37 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
 // Import Security Middleware
 const { protect, adminOnly } = require('../middleware/authMiddleware');
 
-// --- 1. MULTER CONFIGURATION ---
-const uploadDir = 'uploads/';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
+// --- 1. CLOUDINARY CONFIGURATION ---
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const upload = multer({ 
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        const fileTypes = /jpeg|jpg|png|webp/;
-        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-        if (extname) return cb(null, true);
-        cb(new Error("Only images (jpeg, jpg, png, webp) are allowed!"));
-    }
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'expert_computers_inventory',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    transformation: [{ width: 1000, height: 800, crop: 'limit' }] 
+  },
 });
+
+const upload = multer({ storage: storage });
 
 // --- 2. GET ALL PRODUCTS (Public) ---
 router.get('/', async (req, res) => {
@@ -57,26 +50,28 @@ router.get('/:id', async (req, res) => {
 });
 
 // --- 4. POST: ADD NEW PRODUCT (Protected) ---
+// Note: 'images' matches the key used in your Frontend FormData
 router.post('/', protect, adminOnly, upload.array('images', 5), async (req, res) => {
     try {
-        const imagePaths = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+        // Cloudinary returns the full URL in file.path
+        const imagePaths = req.files ? req.files.map(file => file.path) : [];
 
         const newProduct = new Product({
             name: req.body.name,
             brand: req.body.brand,
-            category: req.body.category, // 🚀 ADDED CATEGORY
-            mrp: Number(req.body.mrp),    // Cast to Number for safety
-            price: Number(req.body.price), // Cast to Number for safety
+            category: req.body.category,
+            mrp: req.body.mrp ? Number(req.body.mrp) : null,
+            price: Number(req.body.price),
             description: req.body.description,
-            images: imagePaths,
+            images: imagePaths, // Permanent Cloudinary Links
             sku: "EXP-" + Date.now() 
         });
 
         const savedProduct = await newProduct.save();
         res.status(201).json(savedProduct);
-        console.log(`✅ Product Saved: ${savedProduct.name}`);
+        console.log(`✅ Product Saved to Cloud: ${savedProduct.name}`);
     } catch (err) {
-        console.error("❌ DB Save Error:", err.message);
+        console.error("❌ Cloud Save Error:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
@@ -84,27 +79,24 @@ router.post('/', protect, adminOnly, upload.array('images', 5), async (req, res)
 // --- 5. PUT: UPDATE PRODUCT (Protected) ---
 router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, res) => {
     try {
-        // Prepare the update object
-      const updateData = {
-    name: req.body.name,
-    brand: req.body.brand,
-    category: req.body.category,
-    // 🚀 If mrp has a value, turn it into a Number. If not, set it to null.
-    mrp: req.body.mrp ? Number(req.body.mrp) : null, 
-    price: Number(req.body.price),
-    description: req.body.description,
-};
+        const updateData = {
+            name: req.body.name,
+            brand: req.body.brand,
+            category: req.body.category,
+            mrp: req.body.mrp ? Number(req.body.mrp) : null, 
+            price: Number(req.body.price),
+            description: req.body.description,
+        };
 
-        // If new images are uploaded, update the image array
+        // If new images are uploaded, use the new Cloudinary paths
         if (req.files && req.files.length > 0) {
-            updateData.images = req.files.map(file => `/uploads/${file.filename}`);
+            updateData.images = req.files.map(file => file.path);
         } 
-        // If no new files, but images are sent as string/array (keeping old images)
+        // Keep existing images if no new files are uploaded
         else if (req.body.images) {
             updateData.images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
         }
 
-        // Use { new: true } to return the document AFTER the update
         const updatedProduct = await Product.findByIdAndUpdate(
             req.params.id, 
             { $set: updateData }, 
@@ -115,7 +107,7 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
             return res.status(404).json({ error: "Product not found" });
         }
 
-        console.log(`🆙 Inventory Updated: ${updatedProduct.name} [${updatedProduct.category}]`);
+        console.log(`🆙 Cloud Inventory Updated: ${updatedProduct.name}`);
         res.json(updatedProduct);
     } catch (err) {
         console.error("❌ Update Error:", err.message);
@@ -127,7 +119,7 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
 router.delete('/:id', protect, adminOnly, async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
-        res.json({ message: "Product deleted successfully" });
+        res.json({ message: "Product deleted successfully from database" });
     } catch (err) {
         res.status(500).json({ error: "Delete failed" });
     }
