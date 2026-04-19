@@ -406,7 +406,7 @@ const AdminDashboard = () => {
                 <div className="d-flex gap-3 align-items-center w-100 w-md-auto">
                     <div className="input-group flex-grow-1" style={{maxWidth: '450px'}}>
                         <span className="input-group-text bg-light border-0"><i className="bi bi-search"></i></span>
-                        <input type="text" className="form-control bg-light border-0" placeholder="Universal Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <input type="text" className="form-control bg-light border-0" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
                     <button onClick={handleLogout} className="btn btn-outline-danger px-4 rounded-pill fw-bold">Sign Out</button>
                 </div>
