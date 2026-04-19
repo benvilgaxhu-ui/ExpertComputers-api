@@ -11,7 +11,11 @@ dotenv.config();
 const app = express();
 
 // --- 2. MIDDLEWARE ---
-app.use(cors()); // Bridges the gap between Frontend (3000) and Backend (5000)
+app.use(cors({
+  origin: 'https://expertcomputerss.onrender.com', // Your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+})); // Bridges the gap between Frontend (3000) and Backend (5000)
 app.use(express.json()); // Parses incoming JSON data
 app.use(express.urlencoded({ extended: true })); // parses Form-Data for Multer/Images
 // This tells the server what to do when someone visits https://expertcomputers.onrender.com/
