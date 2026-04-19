@@ -11,15 +11,26 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
  */
 router.post('/', async (req, res) => {
     try {
+        console.log("Data received from frontend:", req.body); // Log to see what arrived
+        
         const newRequest = new ServiceRequest({
             ...req.body,
-            // userId: req.user.id // Bypassed: Enable after Auth is implemented
         });
+        
         const savedRequest = await newRequest.save();
         res.status(201).json(savedRequest);
     } catch (err) {
+        // This part is crucial for debugging Mongoose
+        if (err.name === 'ValidationError') {
+            console.error("Mongoose Validation Error:", err.message);
+            return res.status(400).json({ 
+                error: "Validation failed", 
+                details: err.errors 
+            });
+        }
+        
         console.error("POST Error:", err);
-        res.status(500).json({ error: "Could not submit service request" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
