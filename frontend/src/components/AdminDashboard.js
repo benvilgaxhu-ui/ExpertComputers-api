@@ -21,6 +21,7 @@ const AdminDashboard = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [isEditing, setIsEditing] = useState(null); 
     const [searchTerm, setSearchTerm] = useState('');
+    
 
     const categories = ['Gaming', 'Apple', 'Business', 'Parts', 'Accessories'];
     
@@ -28,7 +29,10 @@ const AdminDashboard = () => {
     const [newProd, setNewProd] = useState({ 
         name: '', brand: '', mrp: '', price: '', category: 'Gaming', description: '' 
     });
+    
+    // 📸 IMAGE & PREVIEW STATE
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [previews, setPreviews] = useState([]);
 
     // --- 🚀 2. STABLE LOGOUT FUNCTION ---
     const handleLogout = useCallback(() => {
@@ -87,6 +91,25 @@ const AdminDashboard = () => {
             fetchData();
         }
     }, [token, navigate, fetchData]);
+
+    // --- 📸 PHOTO SELECTION HANDLERS ---
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        
+        // Append new files to existing selection to allow "First this then this" additions
+        setSelectedFiles(prev => [...prev, ...files]);
+
+        // Generate Blob URLs for visual previews
+        const newPreviews = files.map(file => URL.createObjectURL(file));
+        setPreviews(prev => [...prev, ...newPreviews]);
+    };
+
+    const removeImage = (index) => {
+        const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+        const updatedPreviews = previews.filter((_, i) => i !== index);
+        setSelectedFiles(updatedFiles);
+        setPreviews(updatedPreviews);
+    };
 
     // --- 🚀 4. UNIVERSAL SEARCH ENGINE ---
     const filteredLaptops = laptops.filter(lp => {
@@ -367,7 +390,10 @@ const AdminDashboard = () => {
 
     const resetForm = () => {
         setNewProd({ name: '', brand: '', mrp: '', price: '', category: 'Gaming', description: '' });
-        setSelectedFiles([]); setIsEditing(null); setShowAddForm(false);
+        setSelectedFiles([]); 
+        setPreviews([]); // Clear previews
+        setIsEditing(null); 
+        setShowAddForm(false);
     };
 
     const startEdit = (lp) => {
@@ -468,7 +494,55 @@ const AdminDashboard = () => {
                             <div className="col-md-4"><label className="small fw-bold text-muted">Brand</label><input type="text" className="form-control bg-light border-0 p-3" value={newProd.brand} onChange={(e) => setNewProd({...newProd, brand: e.target.value})} required /></div>
                             <div className="col-md-4"><label className="small fw-bold text-success">Price</label><input type="number" className="form-control bg-light border-0 p-3 fw-bold" value={newProd.price} onChange={(e) => setNewProd({...newProd, price: e.target.value})} required /></div>
                             <div className="col-12"><textarea className="form-control bg-light border-0 p-3" rows="3" value={newProd.description} onChange={(e) => setNewProd({...newProd, description: e.target.value})} required placeholder="Specifications..." /></div>
-                            <div className="col-12"><input type="file" className="form-control bg-light border-0 p-3" multiple onChange={(e) => setSelectedFiles(Array.from(e.target.files))} /></div>
+                            
+                            {/* --- 📸 CUSTOMIZABLE PHOTO GALLERY --- */}
+                            <div className="col-12 mt-3">
+                                <label className="small fw-bold text-muted d-block mb-2">Product Gallery (Order: 1 is Main Thumbnail)</label>
+                                <div className="d-flex flex-wrap gap-3 p-3 border rounded-4 bg-light">
+                                    {/* Add Button */}
+                                    <label style={{ width: '100px', height: '100px', cursor: 'pointer', border: '2px dashed #00aaff', borderRadius: '12px' }} className="d-flex flex-column align-items-center justify-content-center text-info bg-white shadow-sm">
+                                        <i className="bi bi-plus-lg fs-3"></i>
+                                        <span style={{ fontSize: '10px' }} className="fw-bold">ADD PHOTO</span>
+                                        <input type="file" className="d-none" multiple accept="image/*" onChange={handleImageChange} />
+                                    </label>
+
+                                    {/* Numbered Previews */}
+                                    {previews.map((url, index) => (
+                                        <div key={index} className="position-relative animate__animated animate__zoomIn">
+                                            <img 
+                                                src={url} 
+                                                alt="preview" 
+                                                style={{ 
+                                                    width: '100px', height: '100px', 
+                                                    objectFit: 'cover', borderRadius: '12px',
+                                                    border: index === 0 ? '3px solid #00aaff' : '1px solid #ddd' 
+                                                }} 
+                                            />
+                                            {/* Order Badge */}
+                                            <span className="position-absolute top-0 start-0 badge rounded-circle bg-info shadow-sm" style={{ transform: 'translate(-30%, -30%)', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                {index + 1}
+                                            </span>
+                                            {/* Remove Button */}
+                                            <button 
+                                                type="button" 
+                                                onClick={() => removeImage(index)} 
+                                                className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border-0 shadow-sm"
+                                                style={{ width: '20px', height: '20px', padding: 0 }}
+                                            >
+                                                <i className="bi bi-x"></i>
+                                            </button>
+                                            {index === 0 && (
+                                                <span className="position-absolute bottom-0 start-50 translate-middle-x badge bg-info w-75 mb-1" style={{ fontSize: '8px' }}>MAIN</span>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <small className="text-muted mt-2 d-block">
+                                    <i className="bi bi-info-circle me-1"></i>
+                                    Photos will be uploaded in the numerical order shown above.
+                                </small>
+                            </div>
+
                             <button type="submit" className="btn btn-info text-white mt-3 py-3 rounded-pill fw-bold shadow">Confirm Save</button>
                         </div>
                     </form>
