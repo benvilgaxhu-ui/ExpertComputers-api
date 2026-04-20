@@ -100,3 +100,42 @@ body {
     max-width: 100%;
     object-fit: contain;
 }
+/* --- Global Mobile-First Reset --- */
+:root {
+    --expert-blue: #0096FF;
+    --expert-green: #5bb450;
+}
+
+body {
+    overflow-x: hidden; /* Prevents "wiggle" on mobile */
+    font-size: 16px;    /* Better for mobile readability */
+}
+
+/* Make all images responsive by default */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Touch-friendly buttons */
+.btn {
+    padding: 12px 20px; /* Larger hit area for thumbs */
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* --- Mobile Specific Overrides --- */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    
+    /* Remove hover effects on mobile to prevent "sticky" taps */
+    .btn:hover {
+        transform: none !important;
+    }
+}
