@@ -43,7 +43,7 @@ const Home = () => {
     };
 
     return (
-        <div className="overflow-x-hidden">
+        <div className="overflow-x-hidden bg-white">
             {/* --- 📱 MOBILE OPTIMIZED HERO SECTION --- */}
             <div 
                 className="hero-section text-white py-5 shadow-lg" 
@@ -96,15 +96,15 @@ const Home = () => {
                         <h2 className="fw-bold mb-4 border-bottom pb-2">Our Core Expertise</h2>
                         <div className="row g-3">
                             <div className="col-12 col-sm-6">
-                                <div className="card h-100 border-0 shadow-sm p-4 rounded-4 hover-lift transition-all bg-white">
-                                    <div className="mb-3 fs-1 text-center text-sm-start">💻</div>
+                                <div className="card h-100 border-0 shadow-sm p-4 rounded-4 hover-lift transition-all bg-light">
+                                    <div className="mb-2 fs-1 text-center text-sm-start">💻</div>
                                     <h4 className="fw-bold h5 text-center text-sm-start">Premium Sales</h4>
                                     <p className="text-muted small mb-0 text-center text-sm-start">Certified refurbished laptops at unbeatable prices in Delhi.</p>
                                 </div>
                             </div>
                             <div className="col-12 col-sm-6">
-                                <div className="card h-100 border-0 shadow-sm p-4 rounded-4 hover-lift transition-all bg-white">
-                                    <div className="mb-3 fs-1 text-center text-sm-start">🔧</div>
+                                <div className="card h-100 border-0 shadow-sm p-4 rounded-4 hover-lift transition-all bg-light">
+                                    <div className="mb-2 fs-1 text-center text-sm-start">🔧</div>
                                     <h4 className="fw-bold h5 text-center text-sm-start">Expert Repairs</h4>
                                     <p className="text-muted small mb-0 text-center text-sm-start">Motherboard repair, screen replacement, and data recovery.</p>
                                 </div>
@@ -112,9 +112,9 @@ const Home = () => {
                         </div>
                         
                         {/* Mobile Optimized Trust Banner */}
-                        <div className="mt-4 mt-md-5 p-3 p-md-4 bg-light rounded-4 border-start border-primary border-5 shadow-sm text-center text-sm-start">
-                            <h6 className="fw-bold mb-2"><i className="bi bi-patch-check-fill text-primary me-2"></i>Why Choose Us?</h6>
-                            <p className="mb-0 text-secondary small px-2 px-sm-0">
+                        <div className="mt-4 mt-md-5 p-3 p-md-4 bg-primary bg-opacity-10 rounded-4 border-start border-primary border-5 shadow-sm text-center text-sm-start">
+                            <h6 className="fw-bold mb-2 text-primary"><i className="bi bi-patch-check-fill me-2"></i>Why Choose Us?</h6>
+                            <p className="mb-0 text-secondary small px-1 px-sm-0">
                                 1-year warranty on all laptop sales and a 'No-Fix, No-Fee' policy for repairs.
                             </p>
                         </div>
@@ -122,14 +122,14 @@ const Home = () => {
 
                     {/* RIGHT: SERVICE FORM (Stacks on Mobile) */}
                     <div className="col-md-5" id="repair-form">
-                        <div className="card p-3 p-md-4 shadow-lg border-0 rounded-4 animate__animated animate__fadeInRight bg-white mx-1 mx-md-0">
+                        <div className="card p-3 p-md-4 shadow-lg border-0 rounded-4 animate__animated animate__fadeInRight bg-white mx-1 mx-md-0 border-top border-info border-5">
                             <div className="text-center mb-3">
                                 <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2 small fw-bold">QUICK BOOKING</span>
                                 <h3 className="fw-bold h4">Instant Repair Request</h3>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label className="small fw-bold mb-1">Full Name</label>
+                                    <label className="small fw-bold mb-1 text-muted">Full Name</label>
                                     <input 
                                         type="text" 
                                         className="form-control py-3 border-0 bg-light rounded-3" 
@@ -140,18 +140,18 @@ const Home = () => {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="small fw-bold mb-1">Phone Number</label>
+                                    <label className="small fw-bold mb-1 text-muted">Phone Number</label>
                                     <input 
                                         type="tel" 
                                         className="form-control py-3 border-0 bg-light rounded-3" 
                                         value={formData.phone} 
                                         onChange={e => setFormData({...formData, phone: e.target.value})} 
                                         required 
-                                        placeholder="Active phone number" 
+                                        placeholder="Active WhatsApp number" 
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="small fw-bold mb-1">Issue Details</label>
+                                    <label className="small fw-bold mb-1 text-muted">Issue Details</label>
                                     <textarea 
                                         className="form-control border-0 bg-light rounded-3" 
                                         rows="3" 
@@ -178,14 +178,16 @@ const Home = () => {
             {/* --- 📟 CUSTOM HOME CSS --- */}
             <style>{`
                 .main-title {
-                    font-size: calc(2rem + 3vw);
+                    font-size: calc(2.2rem + 2.5vw);
                     line-height: 1.1;
+                    letter-spacing: -1px;
                 }
                 .subtitle-text {
                     font-size: calc(1rem + 1vw);
                 }
                 .hover-lift:hover {
                     transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
                 }
                 
                 /* Prevent horizontal scroll from animations */
@@ -213,6 +215,9 @@ const Home = () => {
                     .container {
                         padding-left: 15px;
                         padding-right: 15px;
+                    }
+                    .btn-lg {
+                        font-size: 1.1rem;
                     }
                 }
             `}</style>

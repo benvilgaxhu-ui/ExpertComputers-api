@@ -48,12 +48,13 @@ const GamingCarousel = () => {
 
     return (
         <div className="container my-4 my-md-5 px-2 px-md-0">
-            {/* 🚀 RESPONSIVE SPLIT-BLOCK CARD */}
+            {/* 🚀 RESPONSIVE SPLIT-BLOCK CARD: Dark side and White side */}
             <div className="card border-0 shadow-lg overflow-hidden rounded-4 rounded-md-5 bg-dark text-white carousel-main-card">
                 <div className="row g-0 h-100">
                     
-                    {/* --- LEFT BLOCK: THE SPECS --- */}
-                    <div className="col-md-6 p-4 p-md-5 d-flex flex-column justify-content-center order-2 order-md-1">
+                    {/* --- LEFT BLOCK: THE SPECS (Dark Side) --- */}
+                    {/* Order-2 on mobile (bottom), Order-1 on desktop (left) */}
+                    <div className="col-md-6 p-4 p-md-5 d-flex flex-column justify-content-center order-2 order-md-1 bg-dark">
                         <div className={`${fade ? 'animate__fadeInUp' : 'animate__fadeOutDown'} animate__animated`}>
                             <span className="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold small">
                                 <i className="bi bi-fire me-2"></i>FEATURED GAMING RIG
@@ -90,18 +91,16 @@ const GamingCarousel = () => {
                         </div>
                     </div>
 
-                    {/* --- RIGHT BLOCK: THE PROFESSIONAL IMAGE (Touch-Inside Alignment) --- */}
-                    <div className="col-md-6 order-1 order-md-2 p-0 position-relative bg-white d-flex align-items-center justify-content-center overflow-hidden">
-                        {/* 🚀 Image occupies the full block height/width to look "integrated" */}
+                    {/* --- RIGHT BLOCK: THE IMAGE (White Side) --- */}
+                    {/* Order-1 on mobile (top), Order-2 on desktop (right) */}
+                    <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center overflow-hidden">
+                        {/* 🚀 Image occupies the block perfectly without being cut */}
                         <img 
                             key={current._id} 
                             src={imgPath} 
                             alt={current.name} 
-                            className={`img-fluid carousel-img animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
+                            className={`carousel-img-adjusted animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
                         />
-                        
-                        {/* Mobile Overlay Gradient (Makes text easier to read if stacked) */}
-                        <div className="d-md-none position-absolute bottom-0 start-0 w-100 h-25" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)' }}></div>
                     </div>
 
                 </div>
@@ -123,25 +122,19 @@ const GamingCarousel = () => {
                 ))}
             </div>
 
-            {/* --- 📟 MOBILE & LAYOUT CUSTOM CSS --- */}
+            {/* --- 📟 UPDATED MOBILE & IMAGE ADJUSTMENT CSS --- */}
             <style>{`
                 .carousel-main-card {
                     min-height: 500px;
                 }
                 
-                .carousel-img {
+                .carousel-img-adjusted {
                     width: 100%;
                     height: 100%;
-                    object-fit: cover; /* 🚀 This makes the image "touch" all inside edges */
+                    /* 🚀 KEY FIX: 'contain' ensures the image is never cut, 'padding' makes it look shorter/centered */
+                    object-fit: contain; 
+                    padding: 40px;
                     transition: all 0.5s ease;
-                }
-
-                /* If you prefer the laptop to not be cropped, use 'contain' with 'p-3' or 'p-0' */
-                @media (min-width: 768px) {
-                    .carousel-img {
-                        object-fit: contain; 
-                        padding: 20px;
-                    }
                 }
 
                 .carousel-title {
@@ -162,9 +155,10 @@ const GamingCarousel = () => {
                     .carousel-main-card {
                         min-height: auto;
                     }
-                    .carousel-img {
-                        height: 250px; /* Controlled height on mobile */
-                        object-fit: cover;
+                    .carousel-img-adjusted {
+                        height: 250px; /* Fixed height for mobile to keep the block "short" */
+                        padding: 20px; /* Reduced padding for smaller screens */
+                        background-color: #ffffff;
                     }
                     .carousel-title {
                         font-size: 1.6rem;
