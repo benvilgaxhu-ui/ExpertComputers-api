@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
+
 
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
@@ -26,10 +26,6 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
 
 // --- 4. SERVE REACT FRONTEND (The SPA Fix) ---
 /**
