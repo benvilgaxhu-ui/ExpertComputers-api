@@ -47,57 +47,57 @@ const GamingCarousel = () => {
         : `${apiBase}${current.images?.[0]}`;
 
     return (
-        <div className="container my-4 my-md-5">
-            {/* 🚀 THE PROFESSIONAL SPLIT-BLOCK */}
+        <div className="container-fluid px-2 px-md-4 my-4">
+            {/* 🚀 SPLIT-BLOCK: g-0 ensures no gaps between the dark and white sides */}
             <div className="card border-0 shadow-lg overflow-hidden rounded-4 bg-dark text-white carousel-firm-card">
                 <div className="row g-0 h-100">
                     
-                    {/* --- INFO BLOCK (Dark Side) --- */}
+                    {/* --- LEFT BLOCK (Dark Side) --- */}
                     <div className="col-md-6 p-4 p-lg-5 d-flex flex-column justify-content-center order-2 order-md-1 bg-dark">
                         <div className={`${fade ? 'animate__fadeInUp' : 'animate__fadeOutDown'} animate__animated`}>
-                            <span className="badge bg-warning text-dark mb-2 px-2 py-1 rounded-pill fw-bold" style={{fontSize: '0.65rem'}}>
-                                FEATURED RIG
+                            <span className="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill fw-bold" style={{fontSize: '0.7rem'}}>
+                                FEATURED GAMING RIG
                             </span>
                             
-                            <h2 className="fw-bold mb-2 carousel-title-compact">
+                            <h2 className="fw-black mb-3 laptop-title-text">
                                 {current.name}
                             </h2>
                             
-                            <p className="text-info mb-4 opacity-75 small">
-                                High-FPS Performance • Stress Tested • Expert Verified 
+                            <p className="text-info mb-4 opacity-75 small d-none d-sm-block">
+                                High-FPS Performance • Stress Tested • Expert Certified 
                             </p>
                             
                             <div className="d-flex align-items-center gap-4 mb-4">
                                 <div>
                                     <p className="x-small text-uppercase mb-0 opacity-50">Expert Price</p>
-                                    <h3 className="text-warning fw-bold mb-0">₹{current.price.toLocaleString('en-IN')}</h3>
+                                    <h3 className="text-warning fw-bold mb-0 fs-2">₹{current.price.toLocaleString('en-IN')}</h3>
                                 </div>
-                                <div className="vr bg-white opacity-25" style={{ height: '30px' }}></div>
+                                <div className="vr bg-white opacity-25" style={{ height: '40px' }}></div>
                                 <div>
                                     <p className="x-small text-uppercase mb-0 opacity-50">Condition</p>
-                                    <p className="fw-bold mb-0 small">Refurbished</p>
+                                    <p className="fw-bold mb-0">Refurbished</p>
                                 </div>
                             </div>
 
-                            <div className="d-flex gap-2">
-                                <Link to={`/product/${current._id}`} className="btn btn-primary px-4 rounded-pill fw-bold shadow-sm btn-sm py-2">
+                            <div className="d-flex gap-3 mt-2">
+                                <Link to={`/product/${current._id}`} className="btn btn-primary px-4 py-2 py-md-3 rounded-pill fw-bold shadow">
                                     Grab Deal
                                 </Link>
-                                <a href={`https://wa.me/919319199300`} target="_blank" rel="noreferrer" className="btn btn-outline-light px-3 rounded-pill btn-sm py-2">
+                                <a href={`https://wa.me/919319199300`} target="_blank" rel="noreferrer" className="btn btn-outline-light px-4 rounded-pill">
                                     <i className="bi bi-whatsapp"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {/* --- IMAGE BLOCK (White Side) --- */}
-                    {/* 🚀 Ensure p-0 so image touches the inner boundaries */}
+                    {/* --- RIGHT BLOCK (White Side) --- */}
+                    {/* 🚀 p-0 and bg-white ensures the photo touches boundaries but stays clean */}
                     <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center overflow-hidden">
                         <img 
                             key={current._id} 
                             src={imgPath} 
                             alt={current.name} 
-                            className={`carousel-img-fill animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
+                            className={`carousel-img-logic animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
                         />
                     </div>
 
@@ -105,61 +105,55 @@ const GamingCarousel = () => {
             </div>
             
             {/* INDICATORS */}
-            <div className="d-flex justify-content-center gap-2 mt-3">
+            <div className="d-flex justify-content-center gap-2 mt-4">
                 {gamingLaptops.map((_, i) => (
                     <button 
                         key={i} 
                         onClick={() => handleManualChange(i)}
                         className={`border-0 rounded-pill transition-all ${currentIndex === i ? 'bg-primary' : 'bg-secondary opacity-25'}`}
-                        style={{ width: currentIndex === i ? '25px' : '6px', height: '6px', cursor: 'pointer' }}
+                        style={{ width: currentIndex === i ? '35px' : '8px', height: '8px', cursor: 'pointer' }}
                     ></button>
                 ))}
             </div>
 
             <style>{`
-                .carousel-firm-card {
-                    min-height: 400px; 
-                    max-height: 450px; /* Slightly taller to allow a bigger photo */
+                /* 🚀 DESKTOP/LAPTOP LOGIC */
+                @media (min-width: 992px) {
+                    .carousel-firm-card {
+                        height: 500px; /* Fixed height for consistent look */
+                    }
+                    .carousel-img-logic {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain; /* Fills without cropping */
+                        padding: 10px; /* Minimal padding for edge-touching look */
+                    }
+                    .laptop-title-text {
+                        font-size: 2.5rem;
+                        font-weight: 900;
+                        line-height: 1.1;
+                    }
                 }
 
-                .carousel-img-fill {
-                    /* 🚀 KEY FIX: width and height 100% makes it touch edges */
-                    width: 100%;
-                    height: 100%;
-                    /* 🚀 contain ensures it fits exactly inside without any parts being cut off */
-                    object-fit: contain; 
-                    transition: all 0.5s ease;
-                }
-
-                .carousel-title-compact {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    line-height: 1.2;
-                    letter-spacing: -0.5px;
-                }
-
-                .x-small { font-size: 9px; letter-spacing: 1px; }
-
+                /* 🚀 MOBILE LOGIC */
                 @media (max-width: 767px) {
                     .carousel-firm-card {
                         min-height: auto;
-                        max-height: none;
                     }
-                    .carousel-img-fill {
-                        height: 250px; /* Big and filling on mobile too */
+                    .carousel-img-logic {
+                        height: 280px; /* Specifically sized for mobile tiles */
                         width: 100%;
+                        object-fit: contain;
+                        padding: 15px;
+                        background-color: #ffffff;
                     }
-                    .carousel-title-compact {
+                    .laptop-title-text {
                         font-size: 1.4rem;
                     }
                 }
 
-                @media (min-width: 992px) {
-                    .carousel-firm-card {
-                        height: 420px;
-                    }
-                }
-
+                .fw-black { font-weight: 900; }
+                .x-small { font-size: 10px; letter-spacing: 1px; }
                 .transition-all { transition: all 0.3s ease-in-out; }
             `}</style>
         </div>
