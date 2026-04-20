@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
 // Note: 'images' matches the key used in your Frontend FormData
 // backend/routes/productRoutes.js
 
-router.post('/', protect, adminOnly, upload.array('images', 5), async (req, res) => {
+router.post('/', protect, adminOnly, upload.array('images', 20), async (req, res) => {
     try {
         // 🛠️ Check if images arrived from Cloudinary
         const imagePaths = req.files ? req.files.map(file => file.path) : [];
