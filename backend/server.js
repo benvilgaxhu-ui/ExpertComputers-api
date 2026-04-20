@@ -4,10 +4,15 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const fs = require('fs');
+const compression = require('compression');
+const buildPath = path.resolve(__dirname, "../frontend/build");
 
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
 const app = express();
+
+// Enable Gzip compression to make the site feel faster
+app.use(compression());
 
 // --- 2. MIDDLEWARE ---
 app.use(cors({
@@ -28,12 +33,15 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 
 // --- 4. SERVE REACT FRONTEND ---
 /**
- * Because your Root Directory is 'backend', __dirname is the backend folder.
- * We go up one level (..) then into frontend/build.
+ * Root Directory is 'backend', so we go up one level (..) to find frontend/build.
+ * We've added caching (maxAge) to improve performance and reduce lag.
  */
 const buildPath = path.resolve(__dirname, "../frontend/build");
 
-app.use(express.static(buildPath));
+app.use(express.static(buildPath, {
+    maxAge: '1d', // Browser will cache images/scripts for 1 day
+    etag: true
+}));
 
 // --- 5. CATCH-ALL ROUTE (The SPA Fix) ---
 app.get('*', (req, res) => {
@@ -42,13 +50,12 @@ app.get('*', (req, res) => {
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
-        // If this displays, the build command in Render settings likely failed
         console.error("🚨 index.html not found at:", indexPath);
         res.status(404).send(`
             <div style="text-align:center; margin-top:50px; font-family:sans-serif;">
                 <h1>Frontend Not Built Yet</h1>
                 <p>The server is looking in: <code>${indexPath}</code></p>
-                <p>Ensure your Build Command is: <code>npm install && cd ../frontend && npm install && npm run build</code></p>
+                <p>Ensure your Render Build Command is: <code>npm install && cd ../frontend && npm install && npm run build</code></p>
             </div>
         `);
     }
