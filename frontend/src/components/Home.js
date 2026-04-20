@@ -115,7 +115,7 @@ const Home = () => {
                         <div className="mt-4 mt-md-5 p-3 p-md-4 bg-primary bg-opacity-10 rounded-4 border-start border-primary border-5 shadow-sm text-center text-sm-start">
                             <h6 className="fw-bold mb-2 text-primary"><i className="bi bi-patch-check-fill me-2"></i>Why Choose Us?</h6>
                             <p className="mb-0 text-secondary small px-1 px-sm-0">
-                                1-year warranty on all laptop sales and a 'No-Fix, No-Fee' policy for repairs.
+                                3-month warranty on all laptop sales and a 'No-Fix, No-Fee' policy for repairs.
                             </p>
                         </div>
                     </div>
