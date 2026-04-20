@@ -421,38 +421,40 @@ const AdminDashboard = () => {
     // --- 🚀 7. UI ARCHITECTURE ---
 
     return (
-        <div className="container-fluid px-4 mt-4 pb-5">
+        <div className="container-fluid px-2 px-md-4 mt-3 mt-md-4 pb-5">
             
             {/* HEADER */}
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 bg-white p-4 shadow-sm rounded-4 border-start border-info border-5">
-                <div className="mb-3 mb-md-0">
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 bg-white p-3 p-md-4 shadow-sm rounded-4 border-start border-info border-5">
+                <div className="mb-3 mb-md-0 text-center text-md-start">
                     <h2 className="fw-bold text-dark mb-0">Expert <span style={{color: '#00aaff'}}>Control Hub</span></h2>
                     <p className="text-muted mb-0 small">Admin: <span className="text-dark fw-bold">{user?.name}</span></p>
                 </div>
-                <div className="d-flex gap-3 align-items-center w-100 w-md-auto">
-                    <div className="input-group flex-grow-1" style={{maxWidth: '450px'}}>
+                <div className="d-flex flex-column flex-md-row gap-3 align-items-center w-100 w-md-auto">
+                    <div className="input-group flex-grow-1" style={{maxWidth: '100%'}}>
                         <span className="input-group-text bg-light border-0"><i className="bi bi-search"></i></span>
-                        <input type="text" className="form-control bg-light border-0" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <input type="text" className="form-control bg-light border-0" placeholder="Search orders, stock..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                     </div>
-                    <button onClick={handleLogout} className="btn btn-outline-danger px-4 rounded-pill fw-bold">Sign Out</button>
+                    <button onClick={handleLogout} className="btn btn-outline-danger px-4 rounded-pill fw-bold w-100 w-md-auto">Sign Out</button>
                 </div>
             </div>
 
-            {/* STATS OVERVIEW */}
-            <div className="row g-3 mb-5">
-                <div className="col-md-3"><div className="card border-0 shadow-sm p-4 rounded-4 bg-primary text-white h-100"><small>Stock</small><h2 className="fw-bold mb-0">{laptops.length}</h2></div></div>
-                <div className="col-md-3"><div className="card border-0 shadow-sm p-4 rounded-4 bg-success text-white h-100"><small>Orders</small><h2 className="fw-bold mb-0">{orders.length}</h2></div></div>
-                <div className="col-md-3"><div className="card border-0 shadow-sm p-4 rounded-4 bg-warning text-dark h-100"><small>Pending Repairs</small><h2 className="fw-bold mb-0">{requests.filter(r => r.status !== 'Fixed ✅').length}</h2></div></div>
-                <div className="col-md-3"><div className="card border-0 shadow-sm p-4 rounded-4 bg-info text-white h-100"><small>Inquiries</small><h2 className="fw-bold mb-0">{inquiries.length}</h2></div></div>
+            {/* STATS OVERVIEW (Responsive Grid: 2 per row on mobile, 4 on desktop) */}
+            <div className="row g-2 g-md-3 mb-4 mb-md-5 text-center text-md-start">
+                <div className="col-6 col-md-3"><div className="card border-0 shadow-sm p-3 p-md-4 rounded-4 bg-primary text-white h-100"><small className="text-uppercase fw-bold opacity-75">Stock</small><h2 className="fw-bold mb-0">{laptops.length}</h2></div></div>
+                <div className="col-6 col-md-3"><div className="card border-0 shadow-sm p-3 p-md-4 rounded-4 bg-success text-white h-100"><small className="text-uppercase fw-bold opacity-75">Orders</small><h2 className="fw-bold mb-0">{orders.length}</h2></div></div>
+                <div className="col-6 col-md-3"><div className="card border-0 shadow-sm p-3 p-md-4 rounded-4 bg-warning text-dark h-100"><small className="text-uppercase fw-bold opacity-75">Pending</small><h2 className="fw-bold mb-0">{requests.filter(r => r.status !== 'Fixed ✅').length}</h2></div></div>
+                <div className="col-6 col-md-3"><div className="card border-0 shadow-sm p-3 p-md-4 rounded-4 bg-info text-white h-100"><small className="text-uppercase fw-bold opacity-75">Leads</small><h2 className="fw-bold mb-0">{inquiries.length}</h2></div></div>
             </div>
 
-            {/* RECENT PURCHASE REQUESTS */}
-            <div className="card border-0 shadow-sm rounded-4 p-4 mb-5 border-start border-success border-5">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="fw-bold mb-0 text-dark">Recent Purchase Requests ({filteredOrders.length})</h4>
-                    <button onClick={downloadOrdersPDF} className="btn btn-sm btn-success rounded-pill px-3 fw-bold">Export Sales PDF</button>
+            {/* RECENT PURCHASE REQUESTS (Card view on mobile) */}
+            <div className="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 mb-md-5 border-start border-success border-5">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 text-center text-md-start">
+                    <h4 className="fw-bold mb-3 mb-md-0 text-dark">Sales Orders ({filteredOrders.length})</h4>
+                    <button onClick={downloadOrdersPDF} className="btn btn-sm btn-success rounded-pill px-3 fw-bold shadow-sm w-100 w-md-auto">Export Sales PDF</button>
                 </div>
-                <div className="table-responsive">
+                
+                {/* Desktop View */}
+                <div className="table-responsive d-none d-md-block">
                     <table className="table table-hover align-middle">
                         <thead className="table-light small fw-bold">
                             <tr><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
@@ -471,7 +473,7 @@ const AdminDashboard = () => {
                                         <div className="d-flex gap-2">
                                             <button onClick={() => viewOrderDetails(ord)} className="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">View</button>
                                             {ord.status !== 'Verified' && <button onClick={() => updateOrderStatus(ord._id, 'Verified')} className="btn btn-sm btn-success rounded-pill px-3">Verify</button>}
-                                            <button onClick={() => deleteOrder(ord._id)} className="btn btn-sm btn-outline-danger border-0"><i className="bi bi-trash3"></i></button>
+                                            <button onClick={() => deleteOrder(ord._id)} className="btn btn-sm text-danger border-0"><i className="bi bi-trash3"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -479,83 +481,100 @@ const AdminDashboard = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile View Cards */}
+                <div className="d-md-none">
+                    {filteredOrders.map(ord => (
+                        <div key={ord._id} className="p-3 mb-2 bg-light rounded-4 border position-relative">
+                            <div className="fw-bold">{ord.customerName || ord.name || "N/A"}</div>
+                            <div className="small text-muted mb-2">{ord.productName}</div>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <span className="text-success fw-bold">₹{ord.amount?.toLocaleString('en-IN')}</span>
+                                <span className={`badge rounded-pill ${ord.status === 'Verified' ? 'bg-success' : 'bg-info'}`}>{ord.status}</span>
+                            </div>
+                            <div className="d-flex gap-2 mt-3">
+                                <button onClick={() => viewOrderDetails(ord)} className="btn btn-sm btn-primary flex-grow-1 rounded-pill">Details</button>
+                                {ord.status !== 'Verified' && <button onClick={() => updateOrderStatus(ord._id, 'Verified')} className="btn btn-sm btn-success flex-grow-1 rounded-pill">Verify</button>}
+                                <button onClick={() => deleteOrder(ord._id)} className="btn btn-sm btn-outline-danger border-0"><i className="bi bi-trash3"></i></button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            {/* INVENTORY EDITOR */}
-            <div className="text-center mb-5">
-                <button className={`btn ${showAddForm ? 'btn-danger' : 'btn-info text-white'} btn-lg shadow px-5 rounded-pill fw-bold`} onClick={() => setShowAddForm(!showAddForm)}>
+            {/* INVENTORY EDITOR (Optimized Inputs for Touch) */}
+            <div className="text-center mb-4 mb-md-5 px-2 px-md-0">
+                <button className={`btn ${showAddForm ? 'btn-danger' : 'btn-info text-white'} btn-lg shadow px-5 rounded-pill fw-bold w-100 py-3 py-md-2`} onClick={() => setShowAddForm(!showAddForm)}>
                     {showAddForm ? '✕ Close Editor' : '＋ Manage Inventory'}
                 </button>
                 {showAddForm && (
-                    <form onSubmit={handleSaveProduct} className="card p-4 shadow-lg mt-4 text-start border-0 rounded-4 animate__animated animate__fadeInUp">
-                        <div className="row g-3">
-                            <div className="col-md-6"><label className="small fw-bold text-muted">Model Name</label><input type="text" className="form-control bg-light border-0 p-3" value={newProd.name} onChange={(e) => setNewProd({...newProd, name: e.target.value})} required /></div>
-                            <div className="col-md-6"><label className="small fw-bold text-muted">Category</label><select className="form-select bg-light border-0 p-3" value={newProd.category} onChange={(e) => setNewProd({...newProd, category: e.target.value})}>{categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}</select></div>
-                            <div className="col-md-4"><label className="small fw-bold text-muted">Brand</label><input type="text" className="form-control bg-light border-0 p-3" value={newProd.brand} onChange={(e) => setNewProd({...newProd, brand: e.target.value})} required /></div>
-                            <div className="col-md-4"><label className="small fw-bold text-success">Price</label><input type="number" className="form-control bg-light border-0 p-3 fw-bold" value={newProd.price} onChange={(e) => setNewProd({...newProd, price: e.target.value})} required /></div>
-                            <div className="col-12"><textarea className="form-control bg-light border-0 p-3" rows="3" value={newProd.description} onChange={(e) => setNewProd({...newProd, description: e.target.value})} required placeholder="Specifications..." /></div>
+                    <form onSubmit={handleSaveProduct} className="card p-3 p-md-4 shadow-lg mt-3 text-start border-0 rounded-4 animate__animated animate__fadeInUp">
+                        <h5 className="fw-bold mb-4 text-info text-center text-md-start">{isEditing ? 'Update Stock Item' : 'Add New Hardware'}</h5>
+                        <div className="row g-2 g-md-3">
+                            <div className="col-12 col-md-6"><label className="small fw-bold text-muted">Model Name</label><input type="text" className="form-control bg-light border-0 p-3 rounded-3" value={newProd.name} onChange={(e) => setNewProd({...newProd, name: e.target.value})} required /></div>
+                            <div className="col-6 col-md-6"><label className="small fw-bold text-muted">Category</label><select className="form-select bg-light border-0 p-3 rounded-3" value={newProd.category} onChange={(e) => setNewProd({...newProd, category: e.target.value})}>{categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}</select></div>
+                            <div className="col-6 col-md-4"><label className="small fw-bold text-muted">Brand</label><input type="text" className="form-control bg-light border-0 p-3 rounded-3" value={newProd.brand} onChange={(e) => setNewProd({...newProd, brand: e.target.value})} required /></div>
+                            <div className="col-12 col-md-4"><label className="small fw-bold text-success">Selling Price (₹)</label><input type="number" className="form-control bg-light border-0 p-3 fw-bold rounded-3" value={newProd.price} onChange={(e) => setNewProd({...newProd, price: e.target.value})} required /></div>
+                            <div className="col-12"><textarea className="form-control bg-light border-0 p-3 rounded-3" rows="3" value={newProd.description} onChange={(e) => setNewProd({...newProd, description: e.target.value})} required placeholder="Enter specs (RAM, Storage, Graphics...)" /></div>
                             
-                            {/* --- 📸 CUSTOMIZABLE PHOTO GALLERY --- */}
+                            {/* --- 📸 CUSTOMIZABLE PHOTO GALLERY (Responsive Swiper) --- */}
                             <div className="col-12 mt-3">
-                                <label className="small fw-bold text-muted d-block mb-2">Product Gallery (Order: 1 is Main Thumbnail)</label>
-                                <div className="d-flex flex-wrap gap-3 p-3 border rounded-4 bg-light">
+                                <label className="small fw-bold text-muted d-block mb-2">Product Gallery (Photo 1 = Main Thumbnail)</label>
+                                <div className="d-flex flex-wrap gap-2 gap-md-3 p-2 p-md-3 border rounded-4 bg-light shadow-inner overflow-auto">
                                     {/* Add Button */}
-                                    <label style={{ width: '100px', height: '100px', cursor: 'pointer', border: '2px dashed #00aaff', borderRadius: '12px' }} className="d-flex flex-column align-items-center justify-content-center text-info bg-white shadow-sm">
+                                    <label style={{ width: '90px', height: '90px', cursor: 'pointer', border: '2px dashed #00aaff', borderRadius: '15px' }} className="d-flex flex-column align-items-center justify-content-center text-info bg-white shadow-sm flex-shrink-0">
                                         <i className="bi bi-plus-lg fs-3"></i>
-                                        <span style={{ fontSize: '10px' }} className="fw-bold">ADD PHOTO</span>
+                                        <span style={{ fontSize: '9px' }} className="fw-bold">ADD PHOTO</span>
                                         <input type="file" className="d-none" multiple accept="image/*" onChange={handleImageChange} />
                                     </label>
 
                                     {/* Numbered Previews */}
                                     {previews.map((url, index) => (
-                                        <div key={index} className="position-relative animate__animated animate__zoomIn">
+                                        <div key={index} className="position-relative animate__animated animate__zoomIn flex-shrink-0" style={{width: '90px', height: '90px'}}>
                                             <img 
                                                 src={url} 
                                                 alt="preview" 
                                                 style={{ 
-                                                    width: '100px', height: '100px', 
-                                                    objectFit: 'cover', borderRadius: '12px',
+                                                    width: '100%', height: '100%', 
+                                                    objectFit: 'cover', borderRadius: '15px',
                                                     border: index === 0 ? '3px solid #00aaff' : '1px solid #ddd' 
                                                 }} 
                                             />
-                                            {/* Order Badge */}
-                                            <span className="position-absolute top-0 start-0 badge rounded-circle bg-info shadow-sm" style={{ transform: 'translate(-30%, -30%)', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <span className="position-absolute top-0 start-0 badge rounded-circle bg-info shadow-sm d-flex align-items-center justify-content-center" style={{ transform: 'translate(-30%, -30%)', width: '22px', height: '22px', fontSize: '11px' }}>
                                                 {index + 1}
                                             </span>
-                                            {/* Remove Button */}
                                             <button 
                                                 type="button" 
                                                 onClick={() => removeImage(index)} 
-                                                className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border-0 shadow-sm"
-                                                style={{ width: '20px', height: '20px', padding: 0 }}
+                                                className="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger border-0 shadow-sm p-1"
                                             >
-                                                <i className="bi bi-x"></i>
+                                                <i className="bi bi-x fs-6"></i>
                                             </button>
                                             {index === 0 && (
-                                                <span className="position-absolute bottom-0 start-50 translate-middle-x badge bg-info w-75 mb-1" style={{ fontSize: '8px' }}>MAIN</span>
+                                                <span className="position-absolute bottom-0 start-50 translate-middle-x badge bg-info w-75 mb-1" style={{ fontSize: '8px', letterSpacing: '0.5px' }}>PRIMARY</span>
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                <small className="text-muted mt-2 d-block">
-                                    <i className="bi bi-info-circle me-1"></i>
-                                    Photos will be uploaded in the numerical order shown above.
+                                <small className="text-muted mt-2 d-block small">
+                                    <i className="bi bi-info-circle me-1"></i> Order is preserved during upload.
                                 </small>
                             </div>
 
-                            <button type="submit" className="btn btn-info text-white mt-3 py-3 rounded-pill fw-bold shadow">Confirm Save</button>
+                            <button type="submit" className="btn btn-info text-white mt-4 py-3 rounded-pill fw-bold shadow">Save Changes to Cloud</button>
                         </div>
                     </form>
                 )}
             </div>
 
-            {/* SERVICE TICKETS (REPAIR LOGS) */}
-            <div className="card border-0 shadow-sm rounded-4 p-4 mb-5 border-start border-warning border-5">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="fw-bold mb-0 text-dark">Service Tickets ({filteredRequests.length})</h4>
-                    <button onClick={downloadRepairsPDF} className="btn btn-sm btn-dark rounded-pill px-3 fw-bold shadow-sm">Export Repairs PDF</button>
+            {/* SERVICE TICKETS (Card view on mobile) */}
+            <div className="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 mb-md-5 border-start border-warning border-5">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 text-center text-md-start">
+                    <h4 className="fw-bold mb-3 mb-md-0 text-dark">Repair Tickets ({filteredRequests.length})</h4>
+                    <button onClick={downloadRepairsPDF} className="btn btn-sm btn-dark rounded-pill px-3 fw-bold shadow-sm w-100 w-md-auto">Export Repairs PDF</button>
                 </div>
-                <div className="table-responsive">
+                
+                <div className="table-responsive d-none d-md-block">
                     <table className="table table-hover align-middle">
                         <thead className="table-light text-uppercase small fw-bold">
                             <tr><th>Device</th><th>Issue</th><th>Contact</th><th>Status</th><th>Actions</th></tr>
@@ -569,8 +588,8 @@ const AdminDashboard = () => {
                                     <td><span className={`badge rounded-pill px-3 py-2 ${req.status === 'Fixed ✅' ? 'bg-success' : 'bg-warning text-dark'}`}>{req.status}</span></td>
                                     <td>
                                         <div className="d-flex gap-2">
-                                            {req.status !== 'Fixed ✅' && <button onClick={() => markAsFixed(req._id)} className="btn btn-sm btn-success px-3 fw-bold rounded-pill">Mark Fixed</button>}
-                                            <button onClick={() => deleteServiceRequest(req._id)} className="btn btn-sm btn-outline-danger border-0" title="Delete Ticket"><i className="bi bi-trash3"></i> Delete</button>
+                                            {req.status !== 'Fixed ✅' && <button onClick={() => markAsFixed(req._id)} className="btn btn-sm btn-success px-3 fw-bold rounded-pill">Complete</button>}
+                                            <button onClick={() => deleteServiceRequest(req._id)} className="btn btn-sm btn-outline-danger border-0"><i className="bi bi-trash3"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -578,63 +597,92 @@ const AdminDashboard = () => {
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            {/* ACTIVE INVENTORY STOCK */}
-            <div className="card border-0 shadow-sm rounded-4 p-4 mb-5">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h4 className="fw-bold mb-0 text-dark">Active Stock ({filteredLaptops.length})</h4>
-                    <button onClick={downloadInventoryPDF} className="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold">Download Inventory PDF</button>
-                </div>
-                <div className="table-responsive">
-                    <table className="table table-hover align-middle">
-                        <thead className="table-light text-uppercase small fw-bold">
-                            <tr><th>Model</th><th>Tier</th><th>Price</th><th>Actions</th></tr>
-                        </thead>
-                        <tbody>
-                            {filteredLaptops.map(lp => (
-                                <tr key={lp._id}>
-                                    <td className="fw-bold">{lp.name}</td>
-                                    <td><span className="badge bg-light text-dark border px-3 rounded-pill fw-normal">{lp.category}</span></td>
-                                    <td className="text-success fw-bold">₹{lp.price.toLocaleString('en-IN')}</td>
-                                    <td>
-                                        <button onClick={() => startEdit(lp)} className="btn btn-sm btn-outline-info me-2 fw-bold border-0">Edit</button>
-                                        <button onClick={() => deleteLaptop(lp._id)} className="btn btn-sm btn-outline-danger border-0"><i className="bi bi-trash"></i></button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {/* Mobile View Cards */}
+                <div className="d-md-none">
+                    {filteredRequests.map(req => (
+                        <div key={req._id} className="p-3 mb-2 bg-white rounded-4 border-start border-warning border-4 shadow-sm">
+                            <div className="fw-bold">{req.device}</div>
+                            <div className="small text-muted mb-2">{req.issue}</div>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <span className="small fw-bold text-info">{req.contact || req.phone}</span>
+                                <span className={`badge rounded-pill ${req.status === 'Fixed ✅' ? 'bg-success' : 'bg-warning text-dark'}`}>{req.status}</span>
+                            </div>
+                            <div className="mt-3 d-flex gap-2">
+                                {req.status !== 'Fixed ✅' && <button onClick={() => markAsFixed(req._id)} className="btn btn-sm btn-success flex-grow-1 rounded-pill fw-bold">Mark Fixed</button>}
+                                <button onClick={() => deleteServiceRequest(req._id)} className="btn btn-sm btn-outline-danger rounded-pill px-3"><i className="bi bi-trash3"></i></button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* CUSTOMER INQUIRIES */}
-            <div className="card border-0 shadow-sm rounded-4 p-4 border-start border-info border-5">
-                <h4 className="fw-bold mb-4 text-info">Customer Inquiries ({filteredInquiries.length})</h4>
-                <div className="table-responsive">
-                    <table className="table table-hover align-middle">
-                        <tbody>
-                            {filteredInquiries.map(iq => (
-                                <tr key={iq._id}>
-                                    <td className="small text-muted">{new Date(iq.date).toLocaleDateString()}</td>
-                                    <td className="fw-bold">{iq.name}</td>
-                                    <td><span className="badge bg-info-subtle text-info px-3 fw-normal">{iq.subject}</span></td>
-                                    <td>
-                                        <div className="d-flex gap-2">
-                                            <button onClick={() => readInquiry(iq)} className="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold">Open</button>
-                                            <button onClick={() => deleteInquiry(iq._id)} className="btn btn-sm btn-outline-danger border-0" title="Delete Inquiry"><i className="bi bi-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            {/* ACTIVE INVENTORY (Mobile-Friendly List) */}
+            <div className="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-4 mb-md-5">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 text-center text-md-start">
+                    <h4 className="fw-bold mb-3 mb-md-0 text-dark">Live Stock Inventory</h4>
+                    <button onClick={downloadInventoryPDF} className="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold w-100 w-md-auto">Inventory PDF</button>
+                </div>
+                
+                <div className="row g-2 g-md-3">
+                    {filteredLaptops.map(lp => (
+                        <div key={lp._id} className="col-12 col-md-6 col-lg-4">
+                            <div className="p-3 bg-white rounded-4 border shadow-sm d-flex justify-content-between align-items-center hover-lift transition-all">
+                                <div className="text-truncate" style={{maxWidth: '70%'}}>
+                                    <div className="fw-bold text-dark text-truncate small">{lp.name}</div>
+                                    <div className="text-success fw-bold">₹{lp.price.toLocaleString('en-IN')}</div>
+                                    <span className="badge bg-light text-muted fw-normal" style={{fontSize: '10px'}}>{lp.category}</span>
+                                </div>
+                                <div className="d-flex gap-1">
+                                    <button onClick={() => startEdit(lp)} className="btn btn-sm btn-outline-info border-0 rounded-circle"><i className="bi bi-pencil"></i></button>
+                                    <button onClick={() => deleteLaptop(lp._id)} className="btn btn-sm btn-outline-danger border-0 rounded-circle"><i className="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            <div className="text-center mt-5 opacity-50">
-                <p className="small mb-0">Project BCSP-064 Expert Computers © 2026</p>
+            {/* CUSTOMER INQUIRIES (Compact Mobile List) */}
+            <div className="card border-0 shadow-sm rounded-4 p-3 p-md-4 border-start border-info border-5">
+                <h4 className="fw-bold mb-3 text-info text-center text-md-start">Customer Leads ({filteredInquiries.length})</h4>
+                <div className="list-group list-group-flush">
+                    {filteredInquiries.map(iq => (
+                        <div key={iq._id} className="list-group-item px-0 bg-transparent border-bottom mb-2 pb-2">
+                            <div className="d-flex justify-content-between align-items-start">
+                                <div className="text-truncate pe-2">
+                                    <div className="fw-bold small text-truncate">{iq.name}</div>
+                                    <div className="text-info fw-bold" style={{fontSize: '11px'}}>{iq.subject}</div>
+                                    <div className="extra-small text-muted">{new Date(iq.date).toLocaleDateString()}</div>
+                                </div>
+                                <div className="d-flex gap-2 flex-shrink-0">
+                                    <button onClick={() => readInquiry(iq)} className="btn btn-sm btn-light border rounded-pill fw-bold">Read</button>
+                                    <button onClick={() => deleteInquiry(iq._id)} className="btn btn-sm text-danger border-0"><i className="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
+
+            {/* FOOTER */}
+            <div className="text-center mt-5 opacity-25">
+                <p className="extra-small mb-0 text-uppercase tracking-widest">Project BCSP-064 | Expert Computers © 2026</p>
+            </div>
+
+            {/* CUSTOM MOBILE CSS */}
+            <style>{`
+                .extra-small { font-size: 10px; }
+                .hover-lift:hover { transform: translateY(-3px); }
+                input, select, textarea { font-size: 16px !important; } /* Prevents iOS auto-zoom */
+                @media (max-width: 768px) {
+                    .container-fluid { padding-bottom: 80px; }
+                    .card { border-radius: 20px !important; }
+                    h4 { font-size: 1.1rem; }
+                    h2 { font-size: 1.4rem; }
+                    .btn-lg { border-radius: 15px !important; }
+                }
+            `}</style>
         </div>
     );
 };

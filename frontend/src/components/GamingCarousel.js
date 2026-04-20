@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import apiBase from '../config'; // Use the relative path to your config file
+import apiBase from '../config'; 
 
 const GamingCarousel = () => {
     const [gamingLaptops, setGamingLaptops] = useState([]);
@@ -47,80 +47,62 @@ const GamingCarousel = () => {
         : `${apiBase}${current.images?.[0]}`;
 
     return (
-        <div className="container my-5">
-            {/* 🚀 FIXED HEIGHT CARD (Locked at 500px) */}
-            <div className="card border-0 shadow-lg overflow-hidden rounded-5 bg-dark text-white" style={{ height: '500px' }}>
+        <div className="container my-4 my-md-5 px-2 px-md-0">
+            {/* 🚀 RESPONSIVE SPLIT-BLOCK CARD */}
+            <div className="card border-0 shadow-lg overflow-hidden rounded-4 rounded-md-5 bg-dark text-white carousel-main-card">
                 <div className="row g-0 h-100">
                     
-                    {/* --- LEFT SIDE: THE SPECS (Flex centered) --- */}
-                    <div className="col-lg-6 p-5 d-flex flex-column justify-content-center h-100">
+                    {/* --- LEFT BLOCK: THE SPECS --- */}
+                    <div className="col-md-6 p-4 p-md-5 d-flex flex-column justify-content-center order-2 order-md-1">
                         <div className={`${fade ? 'animate__fadeInUp' : 'animate__fadeOutDown'} animate__animated`}>
-                            <span className="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">
+                            <span className="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold small">
                                 <i className="bi bi-fire me-2"></i>FEATURED GAMING RIG
                             </span>
                             
-                            {/* Fixed height for name to prevent pushing content down */}
-                            <h1 className="fw-black mb-3" style={{ fontSize: '2.5rem', minHeight: '80px', display: 'flex', alignItems: 'center' }}>
+                            <h1 className="fw-black mb-2 mb-md-3 carousel-title">
                                 {current.name}
                             </h1>
                             
-                            <p className="fs-5 text-info mb-4 opacity-75">
-                                Professional Grade Performance • Expert Verified 
+                            <p className="carousel-subtitle text-info mb-4 opacity-75">
+                                High-FPS Hardware • Stress Tested • Expert Certified 
                             </p>
                             
-                            <div className="d-flex align-items-center gap-4 mb-4">
+                            <div className="d-flex align-items-center gap-3 gap-md-4 mb-4">
                                 <div>
-                                    <p className="small text-uppercase mb-0 opacity-50">Best Price</p>
+                                    <p className="x-small text-uppercase mb-0 opacity-50">Best Price</p>
                                     <h2 className="text-warning fw-bold mb-0">₹{current.price.toLocaleString('en-IN')}</h2>
                                 </div>
                                 <div className="vr bg-white opacity-25" style={{ height: '40px' }}></div>
                                 <div>
-                                    <p className="small text-uppercase mb-0 opacity-50">Condition</p>
-                                    <h4 className="fw-bold mb-0">Refurbished</h4>
+                                    <p className="x-small text-uppercase mb-0 opacity-50">Warranty</p>
+                                    <h4 className="fw-bold mb-0 small-on-mobile">1 Year</h4>
                                 </div>
                             </div>
 
-                            <div className="d-flex gap-3 mt-auto">
-                                <Link to={`/product/${current._id}`} className="btn btn-primary btn-lg px-5 rounded-pill fw-bold shadow">
+                            <div className="d-grid d-md-flex gap-2 gap-md-3 mt-md-auto">
+                                <Link to={`/product/${current._id}`} className="btn btn-primary btn-lg px-md-5 rounded-pill fw-bold shadow py-3">
                                     Grab This Deal
                                 </Link>
-                                <a href="https://wa.me/919319199300" target="_blank" rel="noreferrer" className="btn btn-outline-light btn-lg px-4 rounded-pill">
-                                    <i className="bi bi-whatsapp"></i>
+                                <a href={`https://wa.me/919319199300?text=I am interested in ${current.name}`} target="_blank" rel="noreferrer" className="btn btn-outline-light btn-lg px-md-4 rounded-pill py-3">
+                                    <i className="bi bi-whatsapp me-2"></i> WhatsApp
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {/* --- RIGHT SIDE: THE BIG IMAGE (Fixed Container) --- */}
-                    <div 
-    className="col-lg-6 d-flex align-items-center justify-content-center p-5 h-100" 
-    style={{ backgroundColor: '#ffffff' }} // 🚀 FORCED PURE WHITE
->
-    {/* --- Gradient Shadow (Adjusted to be much subtler or removed) --- */}
-    <div 
-        className="position-absolute" 
-        style={{ 
-            width: '400px', 
-            height: '400px', 
-            background: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 80%)', 
-            zIndex: 0 
-        }}
-    ></div>
-    
-    <img 
-        key={current._id} 
-        src={imgPath} 
-        alt={current.name} 
-        className={`img-fluid position-relative z-1 animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
-        style={{ 
-            height: '350px', 
-            width: '100%', 
-            objectFit: 'contain', 
-            // 🚀 We use a lighter drop-shadow so it doesn't "muddy" the white background
-           
-        }}
-    />
-    </div>
+                    {/* --- RIGHT BLOCK: THE PROFESSIONAL IMAGE (Touch-Inside Alignment) --- */}
+                    <div className="col-md-6 order-1 order-md-2 p-0 position-relative bg-white d-flex align-items-center justify-content-center overflow-hidden">
+                        {/* 🚀 Image occupies the full block height/width to look "integrated" */}
+                        <img 
+                            key={current._id} 
+                            src={imgPath} 
+                            alt={current.name} 
+                            className={`img-fluid carousel-img animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
+                        />
+                        
+                        {/* Mobile Overlay Gradient (Makes text easier to read if stacked) */}
+                        <div className="d-md-none position-absolute bottom-0 start-0 w-100 h-25" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)' }}></div>
+                    </div>
 
                 </div>
             </div>
@@ -133,13 +115,76 @@ const GamingCarousel = () => {
                         onClick={() => handleManualChange(i)}
                         className={`border-0 rounded-pill transition-all ${currentIndex === i ? 'bg-primary' : 'bg-secondary opacity-25'}`}
                         style={{ 
-                            width: currentIndex === i ? '35px' : '12px', 
-                            height: '12px',
+                            width: currentIndex === i ? '35px' : '10px', 
+                            height: '10px',
                             cursor: 'pointer'
                         }}
                     ></button>
                 ))}
             </div>
+
+            {/* --- 📟 MOBILE & LAYOUT CUSTOM CSS --- */}
+            <style>{`
+                .carousel-main-card {
+                    min-height: 500px;
+                }
+                
+                .carousel-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover; /* 🚀 This makes the image "touch" all inside edges */
+                    transition: all 0.5s ease;
+                }
+
+                /* If you prefer the laptop to not be cropped, use 'contain' with 'p-3' or 'p-0' */
+                @media (min-width: 768px) {
+                    .carousel-img {
+                        object-fit: contain; 
+                        padding: 20px;
+                    }
+                }
+
+                .carousel-title {
+                    font-size: calc(1.5rem + 1.5vw);
+                    line-height: 1.1;
+                }
+
+                .carousel-subtitle {
+                    font-size: 1.1rem;
+                }
+
+                .x-small {
+                    font-size: 10px;
+                    letter-spacing: 1px;
+                }
+
+                @media (max-width: 767px) {
+                    .carousel-main-card {
+                        min-height: auto;
+                    }
+                    .carousel-img {
+                        height: 250px; /* Controlled height on mobile */
+                        object-fit: cover;
+                    }
+                    .carousel-title {
+                        font-size: 1.6rem;
+                    }
+                    .carousel-subtitle {
+                        font-size: 0.9rem;
+                    }
+                    .small-on-mobile {
+                        font-size: 1rem;
+                    }
+                }
+
+                .fw-black {
+                    font-weight: 900;
+                }
+                
+                .transition-all {
+                    transition: all 0.3s ease-in-out;
+                }
+            `}</style>
         </div>
     );
 };

@@ -29,6 +29,9 @@ const ScrollToTop = () => {
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
+  
+  // 🛠️ FIX: Manual State for the Mobile Menu
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   useEffect(() => {
     const checkToken = () => setToken(localStorage.getItem('token'));
@@ -36,7 +39,11 @@ function App() {
     return () => window.removeEventListener('storage', checkToken);
   }, []);
 
+  // 🛠️ HELPER: Close menu after clicking a link
+  const closeMenu = () => setIsNavOpen(false);
+
   const handleLogout = () => {
+    closeMenu(); // Close menu when logging out
     Swal.fire({
       title: 'Sign Out?',
       text: "Access to Admin panel will be restricted.",
@@ -57,14 +64,14 @@ function App() {
 
   return (
     <Router>
-      <ScrollToTop /> {/* Ensures page starts at top on mobile */}
+      <ScrollToTop /> 
       
       <div className="d-flex flex-column min-vh-100 bg-white overflow-x-hidden">
         
         {/* --- 🌟 RESPONSIVE NAVIGATION BAR --- */}
         <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm border-bottom border-info border-3 py-1">
           <div className="container"> 
-            <Link className="navbar-brand py-0" to="/">
+            <Link className="navbar-brand py-0" to="/" onClick={closeMenu}>
               <img 
                 src={logo} 
                 className="app-logo"
@@ -72,25 +79,40 @@ function App() {
               />
             </Link>
             
-            {/* Mobile Toggler - Modern Grid Icon */}
-            <button className="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            {/* 🛠️ FIXED TOGGLER: Added onClick toggle logic */}
+            <button 
+                className="navbar-toggler border-0 shadow-none" 
+                type="button"
+                onClick={() => setIsNavOpen(!isNavOpen)}
+            >
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            <div className="collapse navbar-collapse" id="navbarNav">
+            {/* 🛠️ FIXED COLLAPSE: Controlled by isNavOpen state */}
+            <div className={`collapse navbar-collapse ${isNavOpen ? 'show' : ''}`} id="navbarNav">
               <ul className="navbar-nav ms-auto align-items-center gap-1 py-3 py-lg-0">
-                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/">Home</Link></li>
-                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/laptops">Laptops</Link></li>
-                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/services">Services</Link></li>
-                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/about">About</Link></li>
-                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/contact">Contact</Link></li>
+                <li className="nav-item w-100 text-center">
+                    <Link className="nav-link px-3 fw-bold text-dark" to="/" onClick={closeMenu}>Home</Link>
+                </li>
+                <li className="nav-item w-100 text-center">
+                    <Link className="nav-link px-3 fw-bold text-dark" to="/laptops" onClick={closeMenu}>Laptops</Link>
+                </li>
+                <li className="nav-item w-100 text-center">
+                    <Link className="nav-link px-3 fw-bold text-dark" to="/services" onClick={closeMenu}>Services</Link>
+                </li>
+                <li className="nav-item w-100 text-center">
+                    <Link className="nav-link px-3 fw-bold text-dark" to="/about" onClick={closeMenu}>About</Link>
+                </li>
+                <li className="nav-item w-100 text-center">
+                    <Link className="nav-link px-3 fw-bold text-dark" to="/contact" onClick={closeMenu}>Contact</Link>
+                </li>
                 
                 <hr className="d-lg-none w-75 opacity-10 mx-auto" />
 
                 {token ? (
-                  <div className="d-flex flex-column flex-lg-row gap-2 w-100 align-items-center">
+                  <div className="d-flex flex-column flex-lg-row gap-2 w-100 align-items-center px-3">
                     <li className="nav-item w-100">
-                      <Link className="nav-link px-4 fw-bold text-info border border-info rounded-pill text-center bg-light" to="/admin">
+                      <Link className="nav-link px-4 fw-bold text-info border border-info rounded-pill text-center bg-light" to="/admin" onClick={closeMenu}>
                         Dashboard ⚙️
                       </Link>
                     </li>
@@ -101,8 +123,8 @@ function App() {
                     </li>
                   </div>
                 ) : (
-                  <li className="nav-item w-100 text-center">
-                    <Link className="btn btn-info text-white fw-bold px-4 shadow-sm rounded-pill w-100" style={{ backgroundColor: '#00aaff', border: 'none' }} to="/login">
+                  <li className="nav-item w-100 text-center px-3">
+                    <Link className="btn btn-info text-white fw-bold px-4 shadow-sm rounded-pill w-100" style={{ backgroundColor: '#00aaff', border: 'none' }} to="/login" onClick={closeMenu}>
                       Admin Login
                     </Link>
                   </li>
@@ -138,17 +160,17 @@ function App() {
               <div className="col-6 col-md-4">
                 <h6 className="fw-bold mb-3 text-info">Explore</h6>
                 <ul className="list-unstyled d-flex flex-column gap-2 small">
-                  <li><Link to="/laptops" className="text-secondary text-decoration-none">Store Inventory</Link></li>
-                  <li><Link to="/services" className="text-secondary text-decoration-none">Repair Center</Link></li>
-                  <li><Link to="/contact" className="text-secondary text-decoration-none">Get Quote</Link></li>
+                  <li><Link to="/laptops" className="text-secondary text-decoration-none" onClick={closeMenu}>Store Inventory</Link></li>
+                  <li><Link to="/services" className="text-secondary text-decoration-none" onClick={closeMenu}>Repair Center</Link></li>
+                  <li><Link to="/contact" className="text-secondary text-decoration-none" onClick={closeMenu}>Get Quote</Link></li>
                 </ul>
               </div>
 
               <div className="col-6 col-md-4">
                 <h6 className="fw-bold mb-3 text-info">Company</h6>
                 <ul className="list-unstyled d-flex flex-column gap-2 small">
-                  <li><Link to="/about" className="text-secondary text-decoration-none">Our Story</Link></li>
-                  <li><Link to="/login" className="text-secondary text-decoration-none">Staff Login</Link></li>
+                  <li><Link to="/about" className="text-secondary text-decoration-none" onClick={closeMenu}>Our Story</Link></li>
+                  <li><Link to="/login" className="text-secondary text-decoration-none" onClick={closeMenu}>Staff Login</Link></li>
                 </ul>
               </div>
 
@@ -174,16 +196,21 @@ function App() {
           }
           
           @media (max-width: 768px) {
-            .app-logo { height: 60px; }
+            .app-logo { height: 55px; }
             .navbar-nav .nav-link { 
-              padding: 12px; 
+              padding: 15px; 
               font-size: 1.1rem;
-              border-radius: 8px;
+              border-radius: 12px;
             }
             .navbar-nav .nav-link:active {
               background-color: #f0faff;
             }
-            .container { padding-left: 20px; padding-right: 20px; }
+            .container { padding-left: 15px; padding-right: 15px; }
+            
+            /* Logic for the smooth slide down */
+            .navbar-collapse {
+                transition: all 0.35s ease;
+            }
           }
 
           .hover-blue:hover { color: #00aaff !important; }
