@@ -28,29 +28,27 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 
 // --- 4. SERVE REACT FRONTEND ---
 /**
- * We define the path to the 'build' folder. 
- * On Render, this is usually ../frontend/build if your server is in a 'backend' folder.
+ * Because your Root Directory is 'backend', __dirname is the backend folder.
+ * We go up one level (..) then into frontend/build.
  */
 const buildPath = path.resolve(__dirname, "../frontend/build");
 
-// Serve static assets (images, css, js)
 app.use(express.static(buildPath));
 
 // --- 5. CATCH-ALL ROUTE (The SPA Fix) ---
 app.get('*', (req, res) => {
     const indexPath = path.join(buildPath, 'index.html');
     
-    // Check if the file actually exists before trying to send it
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
     } else {
-        // If we reach here, the 'npm run build' didn't run or the path is wrong
-        console.error("🚨 ERROR: index.html not found at: " + indexPath);
+        // If this displays, the build command in Render settings likely failed
+        console.error("🚨 index.html not found at:", indexPath);
         res.status(404).send(`
-            <div style="font-family: sans-serif; padding: 20px;">
-                <h1>Frontend Not Found</h1>
-                <p>The server is looking for the build at: <code>${indexPath}</code></p>
-                <p><strong>Solution:</strong> Ensure your Render Build Command includes <code>npm run build</code>.</p>
+            <div style="text-align:center; margin-top:50px; font-family:sans-serif;">
+                <h1>Frontend Not Built Yet</h1>
+                <p>The server is looking in: <code>${indexPath}</code></p>
+                <p>Ensure your Build Command is: <code>npm install && cd ../frontend && npm install && npm run build</code></p>
             </div>
         `);
     }
@@ -58,10 +56,10 @@ app.get('*', (req, res) => {
 
 // --- 6. GLOBAL ERROR HANDLER ---
 app.use((err, req, res, next) => {
-    console.error("🔥 Full Server Error Info:", err); 
+    console.error("🔥 Server Error:", err); 
     res.status(500).json({ 
         error: "Internal Server Error", 
-        message: err.message || "No error message provided" 
+        message: err.message || "No message provided" 
     });
 });
 
@@ -71,11 +69,10 @@ const DB_URI = process.env.MONGO_URI || "mongodb://localhost:27017/expert_comput
 mongoose.connect(DB_URI)
     .then(() => {
         console.log("✅ Expert Computers Database Connected!");
-        
         const PORT = process.env.PORT || 10000; 
         app.listen(PORT, () => {
-            console.log(`🚀 Server Engine running on port ${PORT}`);
-            console.log(`📂 Serving Frontend from: ${buildPath}`);
+            console.log(`🚀 Server running on port ${PORT}`);
+            console.log(`📂 Serving frontend from: ${buildPath}`);
         });
     })
     .catch(err => {
