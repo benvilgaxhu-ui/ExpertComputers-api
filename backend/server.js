@@ -9,6 +9,7 @@ const compression = require('compression');
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
 const app = express();
+
 const app = express();
 app.use(compression());
 
