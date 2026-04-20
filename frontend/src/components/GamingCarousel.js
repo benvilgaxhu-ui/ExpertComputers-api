@@ -48,11 +48,10 @@ const GamingCarousel = () => {
 
     return (
         <div className="container-fluid px-2 px-md-4 my-4">
-            {/* 🚀 SPLIT-BLOCK: g-0 ensures no gaps between the dark and white sides */}
             <div className="card border-0 shadow-lg overflow-hidden rounded-4 bg-dark text-white carousel-firm-card">
                 <div className="row g-0 h-100">
                     
-                    {/* --- LEFT BLOCK (Dark Side) --- */}
+                    {/* --- LEFT BLOCK (Text) --- */}
                     <div className="col-md-6 p-4 p-lg-5 d-flex flex-column justify-content-center order-2 order-md-1 bg-dark">
                         <div className={`${fade ? 'animate__fadeInUp' : 'animate__fadeOutDown'} animate__animated`}>
                             <span className="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill fw-bold" style={{fontSize: '0.7rem'}}>
@@ -90,21 +89,21 @@ const GamingCarousel = () => {
                         </div>
                     </div>
 
-                    {/* --- RIGHT BLOCK (White Side) --- */}
-                    {/* 🚀 p-0 and bg-white ensures the photo touches boundaries but stays clean */}
-                    <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center overflow-hidden">
-                        <img 
-                            key={current._id} 
-                            src={imgPath} 
-                            alt={current.name} 
-                            className={`carousel-img-logic animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
-                        />
+                    {/* --- RIGHT BLOCK (Image) --- */}
+                    <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center">
+                        <div className="carousel-img-container">
+                            <img 
+                                key={current._id} 
+                                src={imgPath} 
+                                alt={current.name} 
+                                className={`carousel-img-logic animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
+                            />
+                        </div>
                     </div>
 
                 </div>
             </div>
             
-            {/* INDICATORS */}
             <div className="d-flex justify-content-center gap-2 mt-4">
                 {gamingLaptops.map((_, i) => (
                     <button 
@@ -117,35 +116,48 @@ const GamingCarousel = () => {
             </div>
 
             <style>{`
-                /* 🚀 DESKTOP/LAPTOP LOGIC */
+                /* 🚀 THE FIX FOR LAPTOP AND MOBILE */
+                
+                .carousel-firm-card {
+                    min-height: 450px;
+                }
+
+                .carousel-img-container {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #fff;
+                    /* Ensures the image has space to sit without being clipped by card corners */
+                    padding: 10px; 
+                }
+
+                .carousel-img-logic {
+                    max-width: 100%;
+                    max-height: 100%;
+                    /* 🚀 ABSOLUTELY NO CROPPING */
+                    object-fit: contain; 
+                    display: block;
+                }
+
                 @media (min-width: 992px) {
                     .carousel-firm-card {
-                        height: 500px; /* Fixed height for consistent look */
-                    }
-                    .carousel-img-logic {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain; /* Fills without cropping */
-                        padding: 10px; /* Minimal padding for edge-touching look */
+                        height: 500px;
                     }
                     .laptop-title-text {
-                        font-size: 2.5rem;
+                        font-size: 2.4rem;
                         font-weight: 900;
                         line-height: 1.1;
                     }
                 }
 
-                /* 🚀 MOBILE LOGIC */
                 @media (max-width: 767px) {
                     .carousel-firm-card {
                         min-height: auto;
                     }
-                    .carousel-img-logic {
-                        height: 280px; /* Specifically sized for mobile tiles */
-                        width: 100%;
-                        object-fit: contain;
-                        padding: 15px;
-                        background-color: #ffffff;
+                    .carousel-img-container {
+                        height: 300px; /* Fixed height for mobile to keep tiles uniform */
                     }
                     .laptop-title-text {
                         font-size: 1.4rem;
