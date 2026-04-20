@@ -4,7 +4,6 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
 const app = express();
@@ -20,40 +19,40 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
 // --- 3. API ROUTES ---
-// Put all your /api routes BEFORE the static file serving logic
+// These MUST come before the static file serving logic
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes')); 
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
-// --- 4. SERVE REACT FRONTEND (The SPA Fix) ---
+// --- 4. SERVE REACT FRONTEND ---
 /**
- * These lines tell Express to serve your React production build.
- * 'index.html' is the heart of your React app.
+ * Using path.resolve ensures the path is absolute and correct across different 
+ * environments (local vs. Render).
  */
-const buildPath = path.join(__dirname, "../frontend/build");
+const buildPath = path.resolve(__dirname, "../frontend/build");
+
+// 1. Serve static files (js, css, images) from the build folder
 app.use(express.static(buildPath));
 
-// --- 5. CATCH-ALL ROUTE ---
+// --- 5. CATCH-ALL ROUTE (The SPA Fix) ---
 /**
- * For any request that does NOT match an /api route above, 
- * send the React index.html. This allows React Router to handle 
- * direct links and page refreshes.
+ * For any GET request that does NOT match an API route or a static file,
+ * send back the index.html file. React Router will then take over and 
+ * load the correct component based on the URL.
  */
 app.get('*', (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'), (err) => {
         if (err) {
-            // If the build isn't found yet, show the API status
-            res.status(200).send('<h1>ExpertComputers API is Live!</h1><p>Frontend build not detected yet.</p>');
+            console.error("❌ index.html not found at:", path.join(buildPath, 'index.html'));
+            res.status(500).send('<h1>ExpertComputers API is Live!</h1><p>Frontend build folder or index.html missing.</p>');
         }
     });
 });
 
 // --- 6. GLOBAL ERROR HANDLER ---
-// backend/server.js - Update the error handler
 app.use((err, req, res, next) => {
-    // This will now print the FULL error details in your Render logs
     console.error("🔥 Full Server Error Info:", err); 
     res.status(500).json({ 
         error: "Internal Server Error", 
@@ -68,10 +67,11 @@ mongoose.connect(DB_URI)
     .then(() => {
         console.log("✅ Expert Computers Database Connected!");
         
-        const PORT = process.env.PORT || 10000; // Render uses 10000 usually
+        const PORT = process.env.PORT || 10000; 
         app.listen(PORT, () => {
             console.log(`🚀 Server Engine running on port ${PORT}`);
             console.log(`☁️ Cloudinary Inventory Management Active`);
+            console.log(`📂 Serving static files from: ${buildPath}`);
         });
     })
     .catch(err => {
