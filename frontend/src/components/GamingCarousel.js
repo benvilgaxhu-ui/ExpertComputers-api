@@ -48,8 +48,8 @@ const GamingCarousel = () => {
 
     return (
         <div className="container my-4 my-md-5">
-            {/* 🚀 COMPACT PROFESSIONAL CARD (Reduced Height) */}
-            <div className="card border-0 shadow-sm overflow-hidden rounded-4 bg-dark text-white carousel-firm-card">
+            {/* 🚀 THE PROFESSIONAL SPLIT-BLOCK */}
+            <div className="card border-0 shadow-lg overflow-hidden rounded-4 bg-dark text-white carousel-firm-card">
                 <div className="row g-0 h-100">
                     
                     {/* --- INFO BLOCK (Dark Side) --- */}
@@ -91,7 +91,8 @@ const GamingCarousel = () => {
                     </div>
 
                     {/* --- IMAGE BLOCK (White Side) --- */}
-                    <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center overflow-hidden">
+                    {/* 🚀 Removed p-0 to allow image to touch edges properly */}
+                    <div className="col-md-6 order-1 order-md-2 bg-white d-flex align-items-center justify-content-center overflow-hidden">
                         <img 
                             key={current._id} 
                             src={imgPath} 
@@ -103,7 +104,7 @@ const GamingCarousel = () => {
                 </div>
             </div>
             
-            {/* INDICATORS (Smaller for professional look) */}
+            {/* INDICATORS */}
             <div className="d-flex justify-content-center gap-2 mt-3">
                 {gamingLaptops.map((_, i) => (
                     <button 
@@ -116,21 +117,23 @@ const GamingCarousel = () => {
             </div>
 
             <style>{`
-                /* 🚀 FIXED COMPACT HEIGHT */
                 .carousel-firm-card {
-                    min-height: 380px; 
-                    max-height: 420px;
+                    min-height: 400px; 
+                    max-height: 450px;
                 }
 
                 .carousel-img-professional {
-                    max-width: 80%;
-                    max-height: 250px; 
+                    width: 100%;
+                    height: 100%;
+                    /* 🚀 KEY FIX: object-fit contain preserves aspect ratio, 
+                       while max-height 100% allows it to touch top/bottom boundaries */
+                    max-height: 100%; 
                     object-fit: contain; 
-                    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08));
+                    padding: 5px; /* Tiny buffer to prevent edge-bleeding */
                 }
 
                 .carousel-title-compact {
-                    font-size: 1.75rem;
+                    font-size: 1.8rem;
                     font-weight: 800;
                     line-height: 1.2;
                     letter-spacing: -0.5px;
@@ -144,18 +147,18 @@ const GamingCarousel = () => {
                         max-height: none;
                     }
                     .carousel-img-professional {
-                        height: 200px;
-                        max-width: 85%;
-                        padding: 15px;
+                        height: 250px; /* Bigger on mobile too */
+                        width: 100%;
+                        padding: 10px;
                     }
                     .carousel-title-compact {
-                        font-size: 1.3rem;
+                        font-size: 1.4rem;
                     }
                 }
 
                 @media (min-width: 992px) {
                     .carousel-firm-card {
-                        height: 400px;
+                        height: 420px;
                     }
                 }
 
