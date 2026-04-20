@@ -91,13 +91,13 @@ const GamingCarousel = () => {
                     </div>
 
                     {/* --- IMAGE BLOCK (White Side) --- */}
-                    {/* 🚀 Removed p-0 to allow image to touch edges properly */}
-                    <div className="col-md-6 order-1 order-md-2 bg-white d-flex align-items-center justify-content-center overflow-hidden">
+                    {/* 🚀 Ensure p-0 so image touches the inner boundaries */}
+                    <div className="col-md-6 order-1 order-md-2 p-0 bg-white d-flex align-items-center justify-content-center overflow-hidden">
                         <img 
                             key={current._id} 
                             src={imgPath} 
                             alt={current.name} 
-                            className={`carousel-img-professional animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
+                            className={`carousel-img-fill animate__animated ${fade ? 'animate__zoomIn' : 'animate__zoomOut'}`}
                         />
                     </div>
 
@@ -119,17 +119,16 @@ const GamingCarousel = () => {
             <style>{`
                 .carousel-firm-card {
                     min-height: 400px; 
-                    max-height: 450px;
+                    max-height: 450px; /* Slightly taller to allow a bigger photo */
                 }
 
-                .carousel-img-professional {
+                .carousel-img-fill {
+                    /* 🚀 KEY FIX: width and height 100% makes it touch edges */
                     width: 100%;
                     height: 100%;
-                    /* 🚀 KEY FIX: object-fit contain preserves aspect ratio, 
-                       while max-height 100% allows it to touch top/bottom boundaries */
-                    max-height: 100%; 
+                    /* 🚀 contain ensures it fits exactly inside without any parts being cut off */
                     object-fit: contain; 
-                    padding: 5px; /* Tiny buffer to prevent edge-bleeding */
+                    transition: all 0.5s ease;
                 }
 
                 .carousel-title-compact {
@@ -146,10 +145,9 @@ const GamingCarousel = () => {
                         min-height: auto;
                         max-height: none;
                     }
-                    .carousel-img-professional {
-                        height: 250px; /* Bigger on mobile too */
+                    .carousel-img-fill {
+                        height: 250px; /* Big and filling on mobile too */
                         width: 100%;
-                        padding: 10px;
                     }
                     .carousel-title-compact {
                         font-size: 1.4rem;
