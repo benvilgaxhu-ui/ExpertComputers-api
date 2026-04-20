@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'; 
 import Swal from 'sweetalert2';
 
-
 // 🚀 CONFIG & LOGO
-import API_BASE_URL from './config'; // Centralized URL
+import API_BASE_URL from './config'; 
 import logo from './assets/LOGO.png'; 
 
 // --- COMPONENT IMPORTS ---
@@ -20,14 +18,20 @@ import UserLogin from './components/User';
 import About from './components/About';
 import Contact from './components/Contact';
 
+// --- 📱 MOBILE UTILITY: SCROLL TO TOP ON NAVIGATE ---
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  // Sync token state across tabs and on login/logout
   useEffect(() => {
-    const checkToken = () => {
-      setToken(localStorage.getItem('token'));
-    };
+    const checkToken = () => setToken(localStorage.getItem('token'));
     window.addEventListener('storage', checkToken);
     return () => window.removeEventListener('storage', checkToken);
   }, []);
@@ -35,7 +39,7 @@ function App() {
   const handleLogout = () => {
     Swal.fire({
       title: 'Sign Out?',
-      text: "You will need to login again to access the Admin panel.",
+      text: "Access to Admin panel will be restricted.",
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -46,63 +50,59 @@ function App() {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setToken(null); 
-          
-          Swal.fire({
-            title: 'Logged Out',
-            icon: 'success',
-            timer: 1000,
-            showConfirmButton: false
-          }).then(() => {
-            // Using window.location.href forces a full refresh to clear any cached states
-            window.location.href = '/'; 
-          });
+          window.location.href = '/'; 
       }
     });
   };
 
   return (
     <Router>
-      <div className="d-flex flex-column min-vh-100 bg-white">
+      <ScrollToTop /> {/* Ensures page starts at top on mobile */}
+      
+      <div className="d-flex flex-column min-vh-100 bg-white overflow-x-hidden">
         
-        {/* --- 🌟 NAVIGATION BAR --- */}
-        <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-0 border-bottom border-info border-3">
-          <div className="container align-items-end"> 
+        {/* --- 🌟 RESPONSIVE NAVIGATION BAR --- */}
+        <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm border-bottom border-info border-3 py-1">
+          <div className="container"> 
             <Link className="navbar-brand py-0" to="/">
               <img 
                 src={logo} 
+                className="app-logo"
                 alt="Expert Computers" 
-                style={{ height: '100px', width: 'auto', objectFit: 'contain' }} 
               />
             </Link>
             
-            <button className="navbar-toggler mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            {/* Mobile Toggler - Modern Grid Icon */}
+            <button className="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
             </button>
 
-            <div className="collapse navbar-collapse align-items-md-end justify-content-end" id="navbarNav">
-              <ul className="navbar-nav ms-auto align-items-center align-items-md-end gap-2 pb-md-3">
-                <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue" to="/">Home</Link></li>
-                <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue" to="/laptops">Laptops</Link></li>
-                <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue" to="/services">Services</Link></li>
-                <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue" to="/about">About</Link></li>
-                <li className="nav-item"><Link className="nav-link px-3 fw-bold text-dark hover-blue me-2" to="/contact">Contact</Link></li>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav ms-auto align-items-center gap-1 py-3 py-lg-0">
+                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/">Home</Link></li>
+                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/laptops">Laptops</Link></li>
+                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/services">Services</Link></li>
+                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/about">About</Link></li>
+                <li className="nav-item w-100 text-center"><Link className="nav-link px-3 fw-bold text-dark" to="/contact">Contact</Link></li>
                 
+                <hr className="d-lg-none w-75 opacity-10 mx-auto" />
+
                 {token ? (
-                  <>
-                    <li className="nav-item">
-                      <Link className="nav-link px-3 fw-bold text-info border border-info rounded-pill shadow-sm bg-light mb-md-1" to="/admin">
-                        Dashboard 🛠️
+                  <div className="d-flex flex-column flex-lg-row gap-2 w-100 align-items-center">
+                    <li className="nav-item w-100">
+                      <Link className="nav-link px-4 fw-bold text-info border border-info rounded-pill text-center bg-light" to="/admin">
+                        Dashboard ⚙️
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <button className="btn btn-sm btn-outline-danger ms-lg-2 px-4 rounded-pill fw-bold mb-md-1" onClick={handleLogout}>
+                    <li className="nav-item w-100">
+                      <button className="btn btn-outline-danger w-100 rounded-pill fw-bold" onClick={handleLogout}>
                         Logout
                       </button>
                     </li>
-                  </>
+                  </div>
                 ) : (
-                  <li className="nav-item">
-                    <Link className="btn btn-info text-white fw-bold ms-lg-2 px-4 shadow-sm rounded-pill mb-md-1" style={{ backgroundColor: '#00aaff', border: 'none' }} to="/login">
+                  <li className="nav-item w-100 text-center">
+                    <Link className="btn btn-info text-white fw-bold px-4 shadow-sm rounded-pill w-100" style={{ backgroundColor: '#00aaff', border: 'none' }} to="/login">
                       Admin Login
                     </Link>
                   </li>
@@ -126,31 +126,69 @@ function App() {
           </Routes>
         </main>
 
-        {/* --- 🌟 FOOTER --- */}
+        {/* --- 🌟 MOBILE OPTIMIZED FOOTER --- */}
         <footer className="bg-white text-dark py-5 mt-auto border-top border-info border-4 shadow">
           <div className="container">
-            <div className="row align-items-center text-center text-md-start">
-              <div className="col-md-4 mb-4 mb-md-0">
-                <img src={logo} alt="Expert Computers" style={{ height: '50px', marginBottom: '15px' }} />
-                <p className="text-secondary small pe-lg-5">Delhi's premium partner for high-performance computing and expert hardware solutions.</p>
+            <div className="row g-4 text-center text-md-start">
+              <div className="col-12 col-md-4">
+                <img src={logo} alt="Expert Computers" style={{ height: '40px', marginBottom: '15px' }} />
+                <p className="text-secondary small">Delhi's premium firm for high-performance computing and second-hand laptop sales.</p>
               </div>
-              <div className="col-md-4 mb-4 mb-md-0 text-center">
-                <h6 className="fw-bold mb-3 text-info">Quick Navigation</h6>
-                <ul className="list-unstyled d-flex flex-column gap-2">
-                  <li><Link to="/about" className="text-secondary text-decoration-none small hover-blue">Our Story</Link></li>
-                  <li><Link to="/contact" className="text-secondary text-decoration-none small hover-blue">Support Hub</Link></li>
-                  <li><Link to="/laptops" className="text-secondary text-decoration-none small hover-blue">View Inventory</Link></li>
+              
+              <div className="col-6 col-md-4">
+                <h6 className="fw-bold mb-3 text-info">Explore</h6>
+                <ul className="list-unstyled d-flex flex-column gap-2 small">
+                  <li><Link to="/laptops" className="text-secondary text-decoration-none">Store Inventory</Link></li>
+                  <li><Link to="/services" className="text-secondary text-decoration-none">Repair Center</Link></li>
+                  <li><Link to="/contact" className="text-secondary text-decoration-none">Get Quote</Link></li>
                 </ul>
               </div>
-              <div className="col-md-4 text-center text-md-end">
-                <div className="p-3 rounded-4 bg-light shadow-sm">
-                  <p className="mb-1 fw-bold text-dark">BCSP-064 Final Project</p>
-                  <p className="small text-secondary mb-0">Developed by <span className="text-info fw-bold">Krishna</span> | © 2026</p>
+
+              <div className="col-6 col-md-4">
+                <h6 className="fw-bold mb-3 text-info">Company</h6>
+                <ul className="list-unstyled d-flex flex-column gap-2 small">
+                  <li><Link to="/about" className="text-secondary text-decoration-none">Our Story</Link></li>
+                  <li><Link to="/login" className="text-secondary text-decoration-none">Staff Login</Link></li>
+                </ul>
+              </div>
+
+              <div className="col-12 mt-5">
+                <div className="p-3 rounded-4 bg-light text-center">
+                  <p className="mb-0 small text-secondary">
+                    <b>Project BCSP-064</b> | Developed by <span className="text-info fw-bold">Krishna</span>
+                    <br/>© 2026 Expert Computers Delhi
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </footer>
+
+        {/* --- 📟 MOBILE-SPECIFIC INLINE CSS --- */}
+        <style>{`
+          .app-logo { 
+            height: 80px; 
+            width: auto; 
+            object-fit: contain; 
+            transition: height 0.3s ease;
+          }
+          
+          @media (max-width: 768px) {
+            .app-logo { height: 60px; }
+            .navbar-nav .nav-link { 
+              padding: 12px; 
+              font-size: 1.1rem;
+              border-radius: 8px;
+            }
+            .navbar-nav .nav-link:active {
+              background-color: #f0faff;
+            }
+            .container { padding-left: 20px; padding-right: 20px; }
+          }
+
+          .hover-blue:hover { color: #00aaff !important; }
+          .overflow-x-hidden { overflow-x: hidden !important; }
+        `}</style>
 
       </div>
     </Router>

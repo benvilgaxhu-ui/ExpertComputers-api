@@ -67,32 +67,35 @@ const ProductList = () => {
     );
 
     return (
-        <div className="container py-4">
+        <div className="container py-3 py-md-4">
             
             {/* --- SEARCH & FILTER SECTION --- */}
-            <div className="row mb-4 justify-content-center">
+            <div className="row mb-3 mb-md-4 justify-content-center">
                 <div className="col-lg-8">
-                    <div className="input-group shadow-sm rounded-pill overflow-hidden border mb-4">
-                        <span className="input-group-text bg-white border-0 ps-4">
+                    {/* Search Bar - Slightly smaller on mobile */}
+                    <div className="input-group shadow-sm rounded-pill overflow-hidden border mb-3 mb-md-4">
+                        <span className="input-group-text bg-white border-0 ps-3 ps-md-4">
                             <i className="bi bi-search text-primary"></i>
                         </span>
                         <input 
                             type="text" 
-                            className="form-control border-0 py-3" 
-                            placeholder="Search by brand or model..." 
+                            className="form-control border-0 py-2 py-md-3 shadow-none" 
+                            placeholder="Search brand or model..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
 
-                    <div className="d-flex gap-2 overflow-auto pb-3 justify-content-md-center">
+                    {/* Category Scroller - Excellent for thumb-scrolling on mobile */}
+                    <div className="d-flex gap-2 overflow-auto pb-2 justify-content-start justify-content-md-center hide-scrollbar">
                         {categories.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`btn rounded-pill px-4 fw-bold transition-all ${
-                                    activeCategory === cat ? 'btn-primary shadow' : 'btn-light text-muted'
+                                className={`btn rounded-pill px-3 px-md-4 fw-bold transition-all text-nowrap ${
+                                    activeCategory === cat ? 'btn-primary shadow' : 'btn-light text-muted border'
                                 }`}
+                                style={{ fontSize: '0.85rem' }}
                             >
                                 {cat}
                             </button>
@@ -102,26 +105,29 @@ const ProductList = () => {
             </div>
 
             {/* --- PRODUCT GRID --- */}
-            <div className="row g-4">
+            {/* g-2 on mobile for tighter fit, g-md-4 for desktop spacing */}
+            <div className="row g-2 g-md-4">
                 {filteredProducts.map(p => (
-                    <div key={p._id} className="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                    // col-6 is the MAGIC for 2 columns on smartphones
+                    <div key={p._id} className="col-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp">
                         {/* 🚀 WRAPPER LINK: Makes the entire card clickable */}
-                        <Link to={`/product/${p._id}`} className="text-decoration-none">
-                            <div className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative product-card hover-lift transition-all">
+                        <Link to={`/product/${p._id}`} className="text-decoration-none h-100 d-block">
+                            <div className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative product-card hover-lift transition-all bg-white">
                                 
-                                {/* Category Badge */}
-                                <span className="badge bg-dark-subtle text-dark position-absolute top-0 end-0 m-3 px-2 py-1 rounded-pill" style={{zIndex: 10, fontSize: '0.7rem'}}>
+                                {/* Category Badge - Smaller for mobile */}
+                                <span className="badge bg-dark-subtle text-dark position-absolute top-0 end-0 m-2 px-2 py-1 rounded-pill" style={{zIndex: 10, fontSize: '0.6rem'}}>
                                     {p.category}
                                 </span>
 
-                                {/* Discount Badge (Handles MRP 0) */}
+                                {/* Discount Badge - Compact for mobile */}
                                 {p.mrp > p.price && (
-                                    <span className="badge bg-danger position-absolute top-0 start-0 m-3 shadow-sm px-3 py-2 rounded-pill" style={{zIndex: 10}}>
+                                    <span className="badge bg-danger position-absolute top-0 start-0 m-2 shadow-sm px-2 py-1 rounded-pill" style={{zIndex: 10, fontSize: '0.7rem'}}>
                                         {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF
                                     </span>
                                 )}
 
-                                <div className="p-3 bg-white text-center" style={{ height: '220px' }}>
+                                {/* Image Container - Fixed height for grid alignment */}
+                                <div className="p-2 p-md-3 bg-white text-center d-flex align-items-center justify-content-center" style={{ height: '140px', mdHeight: '200px' }}>
                                     <img 
                                         src={resolveImage(p.images?.[0])} 
                                         className="img-fluid" 
@@ -130,34 +136,42 @@ const ProductList = () => {
                                     />
                                 </div>
                                 
-                                <div className="card-body d-flex flex-column">
-                                    <span className="text-primary small fw-bold text-uppercase">{p.brand}</span>
-                                    <h6 className="fw-bold text-dark mb-3" style={{ height: '40px', overflow: 'hidden' }}>{p.name}</h6>
+                                <div className="card-body p-2 p-md-3 d-flex flex-column">
+                                    <span className="text-primary fw-bold text-uppercase mb-1" style={{ fontSize: '0.65rem', letterSpacing: '1px' }}>{p.brand}</span>
+                                    
+                                    {/* Name - Truncated to 2 lines to keep grid even */}
+                                    <h6 className="fw-bold text-dark mb-2 mobile-title-truncate" style={{ fontSize: '0.85rem', lineHeight: '1.2', height: '32px', overflow: 'hidden' }}>
+                                        {p.name}
+                                    </h6>
 
-                                    <div className="mb-4">
-                                        <h4 className="text-primary fw-bold mb-0 d-inline">
-                                            ₹{p.price.toLocaleString('en-IN')}
-                                        </h4>
-                                        
-                                        {/* 🚀 MRP Fix: Only show if higher than sale price */}
-                                        {p.mrp > p.price && (
-                                            <small className="text-muted text-decoration-line-through ms-2">
-                                                ₹{p.mrp.toLocaleString('en-IN')}
-                                            </small>
-                                        )}
+                                    <div className="mb-2 mb-md-3">
+                                        <div className="d-flex flex-wrap align-items-center gap-1">
+                                            <span className="text-primary fw-bold" style={{ fontSize: '1rem' }}>
+                                                ₹{p.price.toLocaleString('en-IN')}
+                                            </span>
+                                            {p.mrp > p.price && (
+                                                <small className="text-muted text-decoration-line-through" style={{ fontSize: '0.75rem' }}>
+                                                    ₹{p.mrp.toLocaleString('en-IN')}
+                                                </small>
+                                            )}
+                                        </div>
                                     </div>
                                     
-                                    <div className="mt-auto d-grid gap-2">
+                                    {/* Actions - Single line buttons on mobile */}
+                                    <div className="mt-auto">
                                         <button 
                                             onClick={(e) => handleWhatsAppInquiry(e, p)}
-                                            className="btn btn-success fw-bold py-2 shadow-sm rounded-3"
+                                            className="btn btn-success w-100 fw-bold py-2 shadow-sm rounded-3 mb-2"
+                                            style={{ fontSize: '0.75rem' }}
                                         >
-                                            <i className="bi bi-whatsapp me-2"></i> Buy on WhatsApp
+                                            <i className="bi bi-whatsapp"></i> Buy
                                         </button>
                                         
-                                        <span className="btn btn-outline-secondary btn-sm py-2 rounded-3 text-muted border-0">
-                                            View Details →
-                                        </span>
+                                        <div className="text-center">
+                                            <span className="text-muted small fw-bold" style={{ fontSize: '0.7rem' }}>
+                                                Details <i className="bi bi-arrow-right"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -175,6 +189,30 @@ const ProductList = () => {
                     </button>
                 </div>
             )}
+
+            {/* Custom CSS for the 2-column mobile experience */}
+            <style>{`
+                .hide-scrollbar::-webkit-scrollbar { display: none; }
+                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                
+                @media (max-width: 576px) {
+                    .product-card {
+                        border-radius: 15px !important;
+                    }
+                    .mobile-title-truncate {
+                        display: -webkit-box;
+                        -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    }
+                }
+
+                .hover-lift:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                }
+                .transition-all { transition: all 0.3s ease; }
+            `}</style>
         </div>
     );
 };
