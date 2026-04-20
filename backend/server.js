@@ -5,13 +5,12 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const fs = require('fs');
 const compression = require('compression');
-const buildPath = path.resolve(__dirname, "../frontend/build");
 
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
 const app = express();
 
-// Enable Gzip compression to make the site feel faster
+// Enable Gzip compression to shrink file sizes and speed up loading
 app.use(compression());
 
 // --- 2. MIDDLEWARE ---
@@ -25,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
 // --- 3. API ROUTES ---
+// API routes must stay at the top so Express doesn't try to serve them as static files
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes')); 
 app.use('/api/services', require('./routes/serviceRoutes'));
@@ -34,16 +34,22 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 // --- 4. SERVE REACT FRONTEND ---
 /**
  * Root Directory is 'backend', so we go up one level (..) to find frontend/build.
- * We've added caching (maxAge) to improve performance and reduce lag.
+ * We include maxAge caching so the browser doesn't have to re-download 
+ * large JS/CSS files on every page refresh.
  */
 const buildPath = path.resolve(__dirname, "../frontend/build");
 
 app.use(express.static(buildPath, {
-    maxAge: '1d', // Browser will cache images/scripts for 1 day
-    etag: true
+    maxAge: '1d', // Cache static assets for 1 day
+    etag: true,    // Use etags for version control
+    index: false   // Let the catch-all handle the index.html
 }));
 
 // --- 5. CATCH-ALL ROUTE (The SPA Fix) ---
+/**
+ * This ensures that if you refresh on /products or /services, 
+ * the server sends index.html, allowing React Router to handle the URL.
+ */
 app.get('*', (req, res) => {
     const indexPath = path.join(buildPath, 'index.html');
     
@@ -53,9 +59,9 @@ app.get('*', (req, res) => {
         console.error("🚨 index.html not found at:", indexPath);
         res.status(404).send(`
             <div style="text-align:center; margin-top:50px; font-family:sans-serif;">
-                <h1>Frontend Not Built Yet</h1>
+                <h1>Frontend Build Missing</h1>
                 <p>The server is looking in: <code>${indexPath}</code></p>
-                <p>Ensure your Render Build Command is: <code>npm install && cd ../frontend && npm install && npm run build</code></p>
+                <p>Check your Render Build Command: <code>npm install && cd ../frontend && npm install && npm run build</code></p>
             </div>
         `);
     }
@@ -63,7 +69,7 @@ app.get('*', (req, res) => {
 
 // --- 6. GLOBAL ERROR HANDLER ---
 app.use((err, req, res, next) => {
-    console.error("🔥 Server Error:", err); 
+    console.error("🔥 Full Server Error Info:", err); 
     res.status(500).json({ 
         error: "Internal Server Error", 
         message: err.message || "No message provided" 
@@ -76,10 +82,12 @@ const DB_URI = process.env.MONGO_URI || "mongodb://localhost:27017/expert_comput
 mongoose.connect(DB_URI)
     .then(() => {
         console.log("✅ Expert Computers Database Connected!");
+        
         const PORT = process.env.PORT || 10000; 
         app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-            console.log(`📂 Serving frontend from: ${buildPath}`);
+            console.log(`🚀 Server Engine running on port ${PORT}`);
+            console.log(`📂 Frontend Path: ${buildPath}`);
+            console.log(`⚡ Compression & Caching Active`);
         });
     })
     .catch(err => {
