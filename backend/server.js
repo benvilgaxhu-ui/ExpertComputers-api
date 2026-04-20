@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const fs = require('fs');
 
 // --- 1. INITIALIZE APP & CONFIG ---
 dotenv.config();
@@ -10,7 +11,7 @@ const app = express();
 
 // --- 2. MIDDLEWARE ---
 app.use(cors({
-    origin: 'https://expertcomputers.onrender.com', // Match your Render Frontend URL
+    origin: 'https://expertcomputers.onrender.com', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
@@ -19,7 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
 // --- 3. API ROUTES ---
-// These MUST come before the static file serving logic
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes')); 
 app.use('/api/services', require('./routes/serviceRoutes'));
@@ -28,27 +28,32 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 
 // --- 4. SERVE REACT FRONTEND ---
 /**
- * Using path.resolve ensures the path is absolute and correct across different 
- * environments (local vs. Render).
+ * We define the path to the 'build' folder. 
+ * On Render, this is usually ../frontend/build if your server is in a 'backend' folder.
  */
 const buildPath = path.resolve(__dirname, "../frontend/build");
 
-// 1. Serve static files (js, css, images) from the build folder
+// Serve static assets (images, css, js)
 app.use(express.static(buildPath));
 
 // --- 5. CATCH-ALL ROUTE (The SPA Fix) ---
-/**
- * For any GET request that does NOT match an API route or a static file,
- * send back the index.html file. React Router will then take over and 
- * load the correct component based on the URL.
- */
 app.get('*', (req, res) => {
-    res.sendFile(path.join(buildPath, 'index.html'), (err) => {
-        if (err) {
-            console.error("❌ index.html not found at:", path.join(buildPath, 'index.html'));
-            res.status(500).send('<h1>ExpertComputers API is Live!</h1><p>Frontend build folder or index.html missing.</p>');
-        }
-    });
+    const indexPath = path.join(buildPath, 'index.html');
+    
+    // Check if the file actually exists before trying to send it
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        // If we reach here, the 'npm run build' didn't run or the path is wrong
+        console.error("🚨 ERROR: index.html not found at: " + indexPath);
+        res.status(404).send(`
+            <div style="font-family: sans-serif; padding: 20px;">
+                <h1>Frontend Not Found</h1>
+                <p>The server is looking for the build at: <code>${indexPath}</code></p>
+                <p><strong>Solution:</strong> Ensure your Render Build Command includes <code>npm run build</code>.</p>
+            </div>
+        `);
+    }
 });
 
 // --- 6. GLOBAL ERROR HANDLER ---
@@ -70,8 +75,7 @@ mongoose.connect(DB_URI)
         const PORT = process.env.PORT || 10000; 
         app.listen(PORT, () => {
             console.log(`🚀 Server Engine running on port ${PORT}`);
-            console.log(`☁️ Cloudinary Inventory Management Active`);
-            console.log(`📂 Serving static files from: ${buildPath}`);
+            console.log(`📂 Serving Frontend from: ${buildPath}`);
         });
     })
     .catch(err => {
