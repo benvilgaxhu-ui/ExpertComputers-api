@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const sendEmailAlert = require('../config/sendEmail'); // 🚀 IMPORT THE EMAIL UTILITY
 
 // 1. REGISTER: Create a new User account
 router.post('/register', async (req, res) => {
@@ -31,6 +32,18 @@ router.post('/register', async (req, res) => {
         });
 
         await user.save();
+
+        // 🚀 TRIGGER EMAIL ALERT: Notify Admin of new registration
+        await sendEmailAlert(
+            `👤 NEW USER REGISTERED: ${name}`,
+            `A new user has joined the Expert Computers platform!\n\n` +
+            `--- USER DETAILS ---\n` +
+            `Name: ${name}\n` +
+            `Email: ${email.toLowerCase()}\n` +
+            `Phone: ${phone}\n\n` +
+            `You can now view this user in your Admin Control Hub database.`
+        );
+
         res.status(201).json({ message: "Registration successful! You can now login." });
         
     } catch (err) {

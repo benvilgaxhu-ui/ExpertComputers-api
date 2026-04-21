@@ -1,8 +1,10 @@
+const sendEmailAlert = require('../config/sendEmail');
 const express = require('express');
 const Order = require('../models/Order');
 const Product = require('../models/Product'); 
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+
 
 /**
  * @desc    Get all orders (Admin Only)
@@ -40,22 +42,37 @@ router.post('/', async (req, res) => {
         }
 
         // 3. 🛡️ SECURITY LOCK: Create order using DB values
-        // Note: Using product.name || product.modelName to prevent undefined field crashes
+        const productName = product.name || product.modelName || "Expert Laptop";
         const newOrder = new Order({ 
             customerName, 
             phone, 
             address, 
             productId: product._id, 
-            productName: product.name || product.modelName || "Expert Laptop", 
+            productName: productName, 
             amount: product.price,                          
             status: 'Pending' 
         });
 
         const savedOrder = await newOrder.save();
+
+        // 🚀 4. TRIGGER EMAIL ALERT (To both accounts via config/sendEmail.js)
+        // We use await to ensure the attempt is made before sending the response
+        await sendEmailAlert(
+            `💰 NEW SALE: ${productName}`,
+            `Great news! A new order has been placed on Expert Computers.\n\n` +
+            `--- CUSTOMER DETAILS ---\n` +
+            `Name: ${customerName}\n` +
+            `Phone: ${phone}\n` +
+            `Address: ${address}\n\n` +
+            `--- PRODUCT DETAILS ---\n` +
+            `Item: ${productName}\n` +
+            `Price: ₹${product.price.toLocaleString('en-IN')}\n\n` +
+            `Please log in to the Admin Control Hub to verify the payment and process the delivery.`
+        );
+
         res.status(201).json(savedOrder);
 
     } catch (error) {
-        // 🚨 CRITICAL: Look at your terminal for this message if you get a 500 error!
         console.error("Order Creation Logic Failure:", error.message);
         res.status(500).json({ 
             message: "Internal Server Error", 
@@ -101,4 +118,4 @@ router.delete('/:id', protect, async (req, res) => {
     }
 });
 
-module.exports = router;  
+module.exports = router;

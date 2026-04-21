@@ -4,6 +4,7 @@ const Product = require('../models/Product');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const sendEmailAlert = require('../config/sendEmail'); // 🚀 IMPORT THE EMAIL UTILITY
 
 // Import Security Middleware
 const { protect, adminOnly } = require('../middleware/authMiddleware');
@@ -49,13 +50,9 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// --- 4. POST: ADD NEW PRODUCT (Protected) ---
-// Note: 'images' matches the key used in your Frontend FormData
-// backend/routes/productRoutes.js
-
+// --- 4. POST: ADD NEW PRODUCT (Protected Admin Only) ---
 router.post('/', protect, adminOnly, upload.array('images', 20), async (req, res) => {
     try {
-        // 🛠️ Check if images arrived from Cloudinary
         const imagePaths = req.files ? req.files.map(file => file.path) : [];
 
         const newProduct = new Product({
@@ -65,23 +62,33 @@ router.post('/', protect, adminOnly, upload.array('images', 20), async (req, res
             mrp: req.body.mrp ? Number(req.body.mrp) : 0, 
             price: Number(req.body.price),
             description: req.body.description,
-            images: imagePaths, // These are the https:// links
+            images: imagePaths,
             sku: "EXP-" + Date.now() 
         });
 
-        // ✅ FIX: Ensure this is newProduct.save() NOT newProduct.laptop.save()
         const savedProduct = await newProduct.save(); 
+
+        // 🚀 TRIGGER EMAIL ALERT: Notification for New Stock
+        await sendEmailAlert(
+            `📦 NEW PRODUCT ADDED: ${savedProduct.name}`,
+            `A new item has been added to the Expert Computers inventory.\n\n` +
+            `--- PRODUCT DETAILS ---\n` +
+            `Model: ${savedProduct.name}\n` +
+            `Brand: ${savedProduct.brand}\n` +
+            `Category: ${savedProduct.category}\n` +
+            `Price: ₹${savedProduct.price.toLocaleString('en-IN')}\n\n` +
+            `The item is now live and visible to customers.`
+        );
         
         res.status(201).json(savedProduct);
-        console.log(`✅ Product Saved: ${savedProduct.name}`);
+        console.log(`✅ Product Saved & Alert Sent: ${savedProduct.name}`);
     } catch (err) {
-        // This will print the EXACT reason for the 500 error in Render Logs
         console.error("❌ DB/Cloudinary Save Error:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// --- 5. PUT: UPDATE PRODUCT (Protected) ---
+// --- 5. PUT: UPDATE PRODUCT (Protected Admin Only) ---
 router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, res) => {
     try {
         const updateData = {
@@ -93,11 +100,9 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
             description: req.body.description,
         };
 
-        // If new images are uploaded, use the new Cloudinary paths
         if (req.files && req.files.length > 0) {
             updateData.images = req.files.map(file => file.path);
         } 
-        // Keep existing images if no new files are uploaded
         else if (req.body.images) {
             updateData.images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
         }
@@ -112,6 +117,17 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
             return res.status(404).json({ error: "Product not found" });
         }
 
+        // 🚀 TRIGGER EMAIL ALERT: Notification for Stock Update
+        await sendEmailAlert(
+            `🆙 PRODUCT UPDATED: ${updatedProduct.name}`,
+            `Inventory details have been modified by the administrator.\n\n` +
+            `--- UPDATED DETAILS ---\n` +
+            `Model: ${updatedProduct.name}\n` +
+            `New Price: ₹${updatedProduct.price.toLocaleString('en-IN')}\n` +
+            `Category: ${updatedProduct.category}\n\n` +
+            `Cloud sync is complete.`
+        );
+
         console.log(`🆙 Cloud Inventory Updated: ${updatedProduct.name}`);
         res.json(updatedProduct);
     } catch (err) {
@@ -120,10 +136,27 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
     }
 });
 
-// --- 6. DELETE PRODUCT (Protected) ---
+// --- 6. DELETE PRODUCT (Protected Admin Only) ---
 router.delete('/:id', protect, adminOnly, async (req, res) => {
     try {
+        // Find product first to get the name for the email alert
+        const product = await Product.findById(req.params.id);
+        
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        const productName = product.name;
         await Product.findByIdAndDelete(req.params.id);
+
+        // 🚀 TRIGGER EMAIL ALERT: Notification for Stock Removal
+        await sendEmailAlert(
+            `🗑️ PRODUCT REMOVED: ${productName}`,
+            `The following item has been deleted from the database and removed from the website.\n\n` +
+            `Item: ${productName}\n\n` +
+            `Action performed by Administrator.`
+        );
+
         res.json({ message: "Product deleted successfully from database" });
     } catch (err) {
         res.status(500).json({ error: "Delete failed" });
