@@ -352,7 +352,7 @@ const AdminDashboard = () => {
                 </div>
             `,
             confirmButtonColor: '#00aaff',
-            confirmButtonText: 'Understood'
+            confirmButtonText: 'Close'
         });
     };
 
