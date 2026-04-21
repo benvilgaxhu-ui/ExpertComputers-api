@@ -14,8 +14,13 @@ const app = express();
 app.use(compression());
 
 // --- 2. MIDDLEWARE ---
+// 👇 THIS IS THE UPDATED CORS SECTION 👇
 app.use(cors({
-    origin: 'https://expertcomputers.onrender.com', 
+    origin: [
+        'https://expertcomputers.onrender.com', // Your live website
+        'capacitor://localhost',                // iOS Mobile App
+        'http://localhost'                      // Android Mobile App
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
