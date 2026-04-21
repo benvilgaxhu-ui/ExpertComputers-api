@@ -22,7 +22,6 @@ const AdminDashboard = () => {
     const [isEditing, setIsEditing] = useState(null); 
     const [searchTerm, setSearchTerm] = useState('');
     
-
     const categories = ['Gaming', 'Apple', 'Business', 'Parts', 'Accessories'];
     
     // Detailed Product State for Inventory Management
@@ -150,7 +149,7 @@ const AdminDashboard = () => {
 
     // --- 🚀 5. BRANDED PDF EXPORT MODULES & INVOICE ---
     
-    // 🛠 PROFESSIONAL INVOICE GENERATOR (RETAINING FULL LOGIC)
+    // 🛠 PROFESSIONAL INVOICE GENERATOR
     const generateInvoicePDF = (ord) => {
         const doc = new jsPDF('p', 'mm', 'a4');
         const pageHeight = 297;
@@ -271,9 +270,8 @@ const AdminDashboard = () => {
         doc.save(`Expert_Inventory_Report_${Date.now()}.pdf`);
     };
 
-    // --- 🚀 6. CRUD LOGIC (WITH NEW DELETE ADDITIONS) ---
+    // --- 🚀 6. CRUD LOGIC ---
 
-    // 🛠 ADDED: DELETE SERVICE REQUEST
     const deleteServiceRequest = async (id) => {
         const result = await Swal.fire({
             title: 'Delete Ticket?',
@@ -292,7 +290,6 @@ const AdminDashboard = () => {
         }
     };
 
-    // 🛠 ADDED: DELETE INQUIRY
     const deleteInquiry = async (id) => {
         const result = await Swal.fire({
             title: 'Delete Inquiry?',
@@ -309,18 +306,23 @@ const AdminDashboard = () => {
         }
     };
 
+    // 🚀 UPDATED: Full Details for Orders
     const viewOrderDetails = (ord) => {
         Swal.fire({
             title: `<span style="color: #198754">Order Manifest</span>`,
             html: `
-                <div class="text-start border-top pt-3" style="font-family: sans-serif;">
+                <div class="text-start border-top pt-3" style="font-family: sans-serif; font-size: 14px;">
+                    <div class="mb-2"><b>Order ID:</b> <span class="text-muted">#${ord._id.substring(0,8).toUpperCase()}</span></div>
                     <div class="mb-2"><b>Customer:</b> ${ord.customerName || ord.name || 'N/A'}</div>
-                    <div class="mb-2"><b>WhatsApp:</b> ${ord.phone || 'N/A'}</div>
+                    <div class="mb-2"><b>Phone:</b> ${ord.phone || 'N/A'}</div>
+                    <div class="mb-2"><b>Email:</b> ${ord.email || 'N/A'}</div>
                     <div class="mb-2"><b>Product:</b> ${ord.productName || 'N/A'}</div>
                     <div class="mb-2"><b>Total Amount:</b> ₹${ord.amount?.toLocaleString('en-IN')}</div>
+                    <div class="mb-2"><b>Date:</b> ${new Date(ord.createdAt || Date.now()).toLocaleString()}</div>
                     <hr>
                     <div class="mb-2"><b>Delivery Address:</b></div>
-                    <p class="bg-light p-3 rounded border small">${ord.address || 'No address provided'}</p>
+                    <p class="bg-light p-3 rounded border small text-dark" style="line-height: 1.5;">${ord.address || 'No address provided'}</p>
+                    <div class="mb-2"><b>Payment Status:</b> <span class="badge bg-success">${ord.status}</span></div>
                 </div>
             `,
             showCancelButton: true,
@@ -331,6 +333,26 @@ const AdminDashboard = () => {
             if (result.isConfirmed) {
                 generateInvoicePDF(ord);
             }
+        });
+    };
+
+    // 🚀 UPDATED: Full Details for Inquiries
+    const readInquiry = (iq) => {
+        Swal.fire({
+            title: `<span style="color: #00aaff">${iq.subject || 'New Inquiry'}</span>`,
+            html: `
+                <div class="text-start border-top pt-3" style="font-family: sans-serif; font-size: 14px;">
+                    <div class="mb-2"><b>From:</b> ${iq.name}</div>
+                    <div class="mb-2"><b>Phone:</b> ${iq.phone || 'N/A'}</div>
+                    <div class="mb-2"><b>Email:</b> ${iq.email || 'N/A'}</div>
+                    <div class="mb-2"><b>Received On:</b> ${new Date(iq.date || iq.createdAt || Date.now()).toLocaleString()}</div>
+                    <hr>
+                    <div class="mb-2"><b>Message Body:</b></div>
+                    <div class="bg-light p-3 rounded border" style="white-space: pre-wrap; min-height: 80px;">${iq.message}</div>
+                </div>
+            `,
+            confirmButtonColor: '#00aaff',
+            confirmButtonText: 'Understood'
         });
     };
 
@@ -408,14 +430,6 @@ const AdminDashboard = () => {
             fetchData();
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Marked Fixed', showConfirmButton: false, timer: 2000 });
         } catch (err) { console.error(err); }
-    };
-
-    const readInquiry = (iq) => {
-        Swal.fire({
-            title: `<span style="color: #00aaff">${iq.subject}</span>`,
-            html: `<div class="text-start border-top pt-3"><p><b>From:</b> ${iq.name}</p><hr><p>${iq.message}</p></div>`,
-            confirmButtonColor: '#00aaff'
-        });
     };
 
     // --- 🚀 7. UI ARCHITECTURE ---
@@ -653,7 +667,7 @@ const AdminDashboard = () => {
                                 <div className="text-truncate pe-2">
                                     <div className="fw-bold small text-truncate">{iq.name}</div>
                                     <div className="text-info fw-bold" style={{fontSize: '11px'}}>{iq.subject}</div>
-                                    <div className="extra-small text-muted">{new Date(iq.date).toLocaleDateString()}</div>
+                                    <div className="extra-small text-muted">{new Date(iq.date || iq.createdAt || Date.now()).toLocaleDateString()}</div>
                                 </div>
                                 <div className="d-flex gap-2 flex-shrink-0">
                                     <button onClick={() => readInquiry(iq)} className="btn btn-sm btn-light border rounded-pill fw-bold">Read</button>
