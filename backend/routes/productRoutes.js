@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const sendEmailAlert = require('../config/sendEmail'); // 🚀 IMPORT THE EMAIL UTILITY
+
 
 // Import Security Middleware
 const { protect, adminOnly } = require('../middleware/authMiddleware');
@@ -117,17 +117,7 @@ router.put('/:id', protect, adminOnly, upload.array('images', 10), async (req, r
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // 🚀 TRIGGER EMAIL ALERT: Notification for Stock Update
-        await sendEmailAlert(
-            `🆙 PRODUCT UPDATED: ${updatedProduct.name}`,
-            `Inventory details have been modified by the administrator.\n\n` +
-            `--- UPDATED DETAILS ---\n` +
-            `Model: ${updatedProduct.name}\n` +
-            `New Price: ₹${updatedProduct.price.toLocaleString('en-IN')}\n` +
-            `Category: ${updatedProduct.category}\n\n` +
-            `Cloud sync is complete.`
-        );
-
+     
         console.log(`🆙 Cloud Inventory Updated: ${updatedProduct.name}`);
         res.json(updatedProduct);
     } catch (err) {
