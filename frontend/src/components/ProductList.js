@@ -21,6 +21,8 @@ const ProductList = () => {
                 setLoading(false);
             })
             .catch(err => {
+                // 🚨 ADDED ALERT: This will force the phone to display the exact error 🚨
+                alert(`FETCH FAILED!\nError: ${err.message}\nTrying to reach: ${apiBase}/api/products`);
                 console.error("Fetch error:", err);
                 setLoading(false);
             });
