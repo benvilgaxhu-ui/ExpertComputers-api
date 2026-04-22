@@ -14,13 +14,12 @@ const app = express();
 app.use(compression());
 
 // --- 2. MIDDLEWARE ---
-// 👇 THIS IS THE UPDATED CORS SECTION 👇
+// 👇 THIS IS THE UPDATED DYNAMIC CORS SECTION 👇
 app.use(cors({
-    origin: [
-        'https://expertcomputers.onrender.com', // Your live website
-        'capacitor://localhost',                // iOS Mobile App
-        'http://localhost'                      // Android Mobile App
-    ],
+    origin: function (origin, callback) {
+        // This dynamically accepts ANY origin, completely bypassing mobile CORS traps
+        callback(null, true);
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
